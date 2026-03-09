@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main>
+
+    <div class="card">
+
+        <div class="page-header">
+            <div class="page-title">Вход</div>
+        </div>
+
+        <form class="form" method="POST">
+            {% csrf_token %}
+            {% for f in form %}
+            <div class="category-form-row">
+                <label class="label">{{ f.label }}</label>
+                {{ f }}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn">Сохранить</button>
+
+        </form>
+
+
+    </div>
+
+</main>
+{% endblock %}

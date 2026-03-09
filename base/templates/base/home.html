@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main>
+    <section class="home-section">
+
+        <h1 class="home-title">Добро пожаловать!</h1>
+        <p class="home-subtitle">Управляйте своими финансами легко и удобно.</p>
+
+        <a href="{% url 'base:table' year month %}" class="home-big-button">
+            Перейти к тратам →
+        </a>
+
+    </section>
+</main>
+{% endblock %}

@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main>
+    <!-- Основная страница -->
+    <section id="expensesPage">
+        <div class="layout">
+            <div class="main-column">
+
+                <!-- Фильтры -->
+                <div class="controls">
+                    <div class="filters">
+                        <div class="filter-group">
+                            <span class="filter-label">Категория</span>
+                            <form method="GET">
+                                <input type="hidden" name="user_filter" value="{{ request.GET.user_filter }}">
+                                <input type="hidden" name="parents" value="{{ request.GET.parents }}">
+
+                                <select name="category_filter" id="categoryFilter" onchange="this.form.submit()">
+                                    <option value="all">Все категории</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category.slug }}"
+                                            {% if request.GET.category_filter == category.slug %} selected {% endif %}>
+                                        {{ category.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </form>
+                        </div>
+
+                        <div class="filter-group">
+                            <span class="filter-label">Кто потратил</span>
+                            <form method="GET">
+                                <input type="hidden" name="category_filter" value="{{ request.GET.category_filter }}">
+                                <input type="hidden" name="parents" value="{{ request.GET.parents }}">
+
+                                <select name="user_filter" id="personFilter" onchange="this.form.submit()">
+                                    <option value="all">Все</option>
+                                    {% for user in users %}
+                                    <option value="{{ user.username }}" {% if request.GET.user_filter == user.username %}
+                                            selected {% endif %}>{{ user.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Навигация по месяцам -->
+                    <div class="month-nav">
+                        <div class="month-label" id="monthLabel">{{ month }} {{ year }}</div>
+                        <div class="month-buttons">
+                            <a href="{% url 'base:table' arrows_url.previous_year arrows_url.previous_month %}">
+                                <button class="icon-btn">←</button>
+                            </a>
+                            <a href="{% url 'base:table' arrows_url.next_year arrows_url.next_month %}">
+                                <button class="icon-btn">→</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Таблица -->
+                <div class="table-card">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Категория</th>
+                                <th>Кто</th>
+                                <th>Название</th>
+                                <th>Стоимость</th>
+                                <th>Дата</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+
+                            <!-- Форма добавления -->
+                            <tbody>
+                            <tr class="form-row">
+                                <form action="{% url 'base:add_purchase' %}" method="POST">
+                                    {% csrf_token %}
+                                    {% if form.non_field_errors %}
+                                    <div class="form-error">
+                                        {{ post_form.non_field_errors }}
+                                    </div>
+                                    {% endif %}
+                                    {% for f in form %}
+
+                                    <td>
+                                        {{ f }}
+                                        {% if f.errors %}
+                                        <div class="form-error">
+                                            {{ f.errors }}
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    {% endfor %}
+                                    <td>
+                                        <button class="btn">+</button>
+                                    </td>
+
+                                </form>
+                            </tr>
+
+                            <!-- Данные трат (ты сам подставишь через Django) -->
+                            <tbody id="expensesTableBody"></tbody>
+                            <tbody id="expensesTableBody">
+                            {% for pur in purchases %}
+                            <tr>
+                                <td class="category-cloud" style="--cat-color: {{ pur.category.color }};">
+                                    {{ pur.category.name }}
+                                </td>
+                                <td class="category-cloud" style="--cat-color: {{ pur.user.color }};">
+                                    {{ pur.user.name }}
+                                </td>
+                                <td>{{ pur.name }}</td>
+                                <td class="amount-cell">{{ pur.price }} ₽</td>
+                                <td class="date-cell">{{ pur.date|date:"d.m.Y" }}</td>
+                                {% load static %}
+                                <td><a href="{% url 'base:delete_purchase' pur.pk %}" class="delete-btn"><b>X</b></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if not purchases %}
+                    <div class="empty-state">Пока нет трат за этот месяц.</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Дашборд -->
+            <aside class="dashboard">
+                <div class="dashboard-header">
+                <div class="dashboard-title">Дашборд</div>
+                <div class="dashborad-toggle">
+                <form method="GET">
+                    <input type="hidden" name="category_filter" value="{{ request.GET.category_filter }}">
+                    <input type="hidden" name="user_filter" value="{{ request.GET.user_filter }}">
+
+                    <label class="toggle">
+                        <input type="checkbox" onchange="this.form.submit()" name="parents" {% if request.GET.parents == 'on' %} checked {% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </form>
+                </div>
+                </div>
+                <div class="chart-block">
+                    <div class="chart-label">Распределение по категориям</div>
+                    <canvas id="categoryChart" height="180"></canvas>
+                </div>
+
+                <div class="chart-block">
+                    <div class="chart-label">Сколько потратил каждый</div>
+                    <canvas id="personChart" height="230"></canvas>
+                </div>
+                <div class="chart-block">
+                    <div class="chart-label">
+                        В день на еду: <b>{{ products_per_day }}</b>
+                    </div>
+                </div>
+            </aside>
+            <!-- Подключаем плагин перед созданием графиков -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<script>
+const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+const personCtx = document.getElementById('personChart').getContext('2d');
+
+// PIE / DOUGHNUT - категории с процентами
+const categoryChart = new Chart(categoryCtx, {
+    type: 'pie',
+    data: {
+        labels: {{ category_labels|safe }},
+        datasets: [{
+            data: {{ category_totals|safe }},
+            backgroundColor: {{ category_colors|safe }}
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.label + ': ₽' + context.raw.toFixed(2);
+                    }
+                }
+            },
+            datalabels: {
+                color: '#111827', // цвет текста
+                formatter: (value, context) => {
+                    const total = context.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);
+                    const percent = (value / total * 100).toFixed(1);
+                    return percent + '%';
+                },
+                font: { weight: '500', size: 12 }
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
+
+// BAR - расходы по пользователям с суммой над столбцами
+const personChart = new Chart(personCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ person_labels|safe }},
+        datasets: [{
+            label: 'Потрачено',
+            data: {{ person_totals|safe }},
+            backgroundColor: {{ person_colors|safe }},
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return '₽' + context.raw.toFixed(2);
+                    }
+                }
+            },
+            datalabels: {
+                anchor: 'end',
+                align: 'end',
+                color: '#111827',
+                formatter: (value) => '₽' + value.toFixed(2),
+                font: { weight: '500', size: 12 }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { stepSize: 100 }, // можно подстроить под суммы
+            }
+        },
+        layout: {
+            padding: { top: 30 } // вот этот отступ нужен для текста над колонками
+        }
+    },
+    plugins: [ChartDataLabels]
+});
+</script>
+        </div>
+    </section>
+
+</main>
+{% endblock %}

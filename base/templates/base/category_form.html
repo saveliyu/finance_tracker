@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main>
+
+    <div class="card">
+
+        <div class="page-header">
+            <div class="page-title">Новая категория</div>
+            <a href="javascript:history.back()"><button type="submit" class="btn">← Назад</button></a>
+        </div>
+
+        <form class="form" method="POST">
+            {% csrf_token %}
+            {% for f in form %}
+            <div class="category-form-row">
+                <label class="label">{{ f.label }}</label>
+                {{ f }}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn">Сохранить</button>
+
+        </form>
+
+        <div class="category-list">
+
+            <div class="category-title">Текущие категории</div>
+
+            <div class="category-pills">
+                {% for cat in categories %}
+                {% if cat.parent %}
+                <div class="category-pill" style="background: {{ cat.color }}99;"><span
+                        style="color: {{ cat.color }}; filter: brightness(0.5);">{{ cat.name }}</span></div>
+                {% else %}
+                <div class="category-pill" style="background: {{ cat.color }}99;"><span
+                        style="color: {{ cat.color }}; filter: brightness(0.5);"><b>{{ cat.name }}</b></span></div>
+                {% endif %}
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+{% endblock %}
