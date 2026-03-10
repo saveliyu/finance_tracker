@@ -26,9 +26,9 @@ class IndexView(TemplateView):
         }
         return context
 
-
+@login_required(login_url='users:login')
 def table_view(request, year=None, month=None):
-    categories = Category.objects.all().order_by('parent')
+    categories = Category.objects.all().order_by('-parent')
     users = get_user_model().objects.all()
     purchases = Purchase.objects.filter(date__year=year, date__month=list(MONTHS.keys()).index(month) + 1)
     clean_purchases = purchases
@@ -80,6 +80,8 @@ def table_view(request, year=None, month=None):
 def add_purchase_view(request):
     form = PurchaseForm(request.POST)
     if form.is_valid():
+        if form.cleaned_data['user'] != request.user:
+            return redirect(request.META.get('HTTP_REFERER', '/'))
         form.save()
         return redirect(request.META.get('HTTP_REFERER', '/'))
 
