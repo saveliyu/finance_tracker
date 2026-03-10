@@ -1,4 +1,3 @@
-
 MONTHS = {
     "january": "январь",
     "february": "февраль",

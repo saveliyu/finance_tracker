@@ -13,7 +13,7 @@ class PurchaseForm(forms.ModelForm):
         widget=forms.Select(attrs={'style': 'min-width: 70px;', 'class': 'form-control select-input'})
     )
     name = forms.CharField(max_length=100,
-                           widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Название'}))
+                            widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Название'}))
     price = forms.DecimalField(decimal_places=2, max_digits=10, widget=forms.NumberInput(
         attrs={'type': "number", 'placeholder': "0", 'class': 'form-control'}))
     date = forms.DateField(

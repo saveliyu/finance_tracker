@@ -1,8 +1,8 @@
-from django.contrib.auth import authenticate, logout
+from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
 
 from .forms import CustomUserLoginForm
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 
 
 class CustomUserLoginView(LoginView):
