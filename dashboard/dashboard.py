@@ -56,7 +56,7 @@ def get_products_per_day(purchases) -> dict:
         return {'products_per_day': 0}
     else:
         products_per_day /= (purchases[0].date.day - purchases.last().date.day)
-        return {'products_per_day': products_per_day}
+        return {'products_per_day': round(products_per_day, 2)}
 
 
 def get_data_for_dashboard(clean_purchases, purchases, categories, users, parents=None) -> dict:
