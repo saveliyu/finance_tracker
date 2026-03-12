@@ -3,11 +3,14 @@ from slugify import slugify
 
 from django.conf import settings
 
+from users.models import Family
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     color = models.CharField(max_length=100)
+    family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name='categories')
 
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
 
@@ -31,6 +34,7 @@ class Purchase(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     date = models.DateField()
+    family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name='purchases')
 
     class Meta:
         ordering = ['-date']
