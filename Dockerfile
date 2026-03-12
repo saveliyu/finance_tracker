@@ -2,7 +2,7 @@ FROM python:3.13-slim
 
 WORKDIR /app
 
-RUN apt-get update && app-get install -y \
+RUN apt-get update && apt-get install -y \
     libpq-dev \
     gcc \
     gettext \
@@ -10,8 +10,8 @@ RUN apt-get update && app-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install --no-cahce-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["sh", "-c", "python manage.py migrate && gunicorn reverence.wsgi.application --bind 0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py migrate && gunicorn finance_tracker.wsgi:application --bind 0.0.0.0:8000"]
