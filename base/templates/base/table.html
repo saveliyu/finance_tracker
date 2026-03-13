@@ -104,7 +104,6 @@
                             </tr>
 
                             <!-- Данные трат (ты сам подставишь через Django) -->
-                            <tbody id="expensesTableBody"></tbody>
                             <tbody id="expensesTableBody">
                             {% for pur in purchases %}
                             <tr>
@@ -117,8 +116,8 @@
                                 <td>{{ pur.name }}</td>
                                 <td class="amount-cell">{{ pur.price }} ₽</td>
                                 <td class="date-cell">{{ pur.date|date:"d.m.Y" }}</td>
-                                {% load static %}
-                                <td><a href="{% url 'base:delete_purchase' pur.pk %}" class="delete-btn"><b>X</b></a>
+                                <td>
+                                    <a href="{% url 'base:delete_purchase' pur.pk %}" class="delete-btn"><b>X</b></a>
                                 </td>
                             </tr>
                             {% endfor %}

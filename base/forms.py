@@ -26,6 +26,8 @@ class PurchaseForm(forms.ModelForm):
         )
     )
 
+
+
     class Meta:
         model = Purchase
         fields = ('category', 'user', 'name', 'price', 'date')
@@ -47,7 +49,8 @@ class CategoryForm(forms.ModelForm):
     parent = forms.ModelChoiceField(queryset=Category.objects.filter(parent=None),
                                     empty_label='Эта категория будет родительской',
                                     label='Выберите родительскую категорию',
-                                    widget=forms.Select(attrs={'class': 'select-input category-input'}))
+                                    widget=forms.Select(attrs={'class': 'select-input category-input'}), required=False)
+
 
     class Meta:
         model = Category

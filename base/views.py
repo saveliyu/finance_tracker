@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 
@@ -8,6 +8,7 @@ from base.models import Category, Purchase
 
 from datetime import datetime
 
+from users.models import Family
 from .arrows_url import *
 from dashboard.dashboard import get_data_for_dashboard
 
@@ -27,8 +28,9 @@ class IndexView(TemplateView):
 
 @login_required(login_url='users:login')
 def table_view(request, year=None, month=None):
-    categories = Category.objects.all().order_by('-parent')
-    users = get_user_model().objects.all()
+    categories = Category.objects.filter(family=request.user.family).order_by('-parent')
+    users = get_object_or_404(Family, slug=request.user.family.slug).users.all()
+    print(users)
     purchases = Purchase.objects.filter(date__year=year, date__month=list(MONTHS.keys()).index(month) + 1)
     clean_purchases = purchases
     if request.GET.get('user_filter'):
@@ -81,7 +83,9 @@ def add_purchase_view(request):
     if form.is_valid():
         if form.cleaned_data['user'] != request.user:
             return redirect(request.META.get('HTTP_REFERER', '/'))
-        form.save()
+        purchase = form.save(commit=False)
+        purchase.family = request.user.family
+        purchase.save()
         return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
@@ -94,16 +98,36 @@ def delete_purchase_view(request, pk):
 
 @login_required(login_url='users:login')
 def add_category_view(request):
-    categories = Category.objects.all().order_by('parent')
+    categories = Category.objects.filter(family=request.user.family).order_by('parent')
     form = CategoryForm()
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
-            form.save()
+            category = form.save(commit=False)
+            category.family = request.user.family
+            category.parent = form.cleaned_data['parent']
+            category.save()
             return redirect(request.META.get('HTTP_REFERER', '/'))
+        else:
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+
 
     context = {
         'categories': categories,
         'form': form,
     }
     return render(request, 'base/category_form.html', context)
+
+
+def delete_category_view(request, pk):
+    category = Category.objects.get(pk=pk)
+    category.delete()
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+def family_view(request):
+    family = request.user.family.users.all()
+    print(family)
+    context = {
+        'family': family,
+    }
+    return render(request, 'base/family.html', context)

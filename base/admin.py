@@ -5,7 +5,7 @@ from .models import *
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'parent')
+    list_display = ('name', 'parent', 'family')
     list_editable = ('parent',)
     search_fields = ('name',)
     ordering = ('parent', 'name')
@@ -14,7 +14,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Purchase)
 class PurchaseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'date', 'user', 'category')
+    list_display = ('name', 'price', 'date', 'user', 'category', 'family')
     search_fields = ('name',)
     ordering = ('-date',)
     prepopulated_fields = {'slug': ('name',)}

@@ -10,6 +10,8 @@ urlpatterns = [
     path('add_purchase/', views.add_purchase_view, name='add_purchase'),
     path('delete_purchase/<int:pk>/', views.delete_purchase_view, name='delete_purchase'),
     path('add_category/', views.add_category_view, name='add_category'),
+    path('delete_category/<int:pk>/', views.delete_category_view, name='delete_category'),
+    path('family/', views.family_view, name='family'),
 ]
 
 

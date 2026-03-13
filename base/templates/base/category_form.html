@@ -13,11 +13,22 @@
 
         <form class="form" method="POST">
             {% csrf_token %}
+            {% if post_form.non_field_errors %}
+                <div class="form-error">
+                    {{ post_form.non_field_errors }}
+                </div>
+            {% endif %}
             {% for f in form %}
+
             <div class="category-form-row">
                 <label class="label">{{ f.label }}</label>
                 {{ f }}
             </div>
+            {% if f.errors %}
+                        <div class="form-error">
+                            {{ f.errors }}
+                        </div>
+                {% endif %}
             {% endfor %}
 
             <button type="submit" class="btn">Сохранить</button>
@@ -30,13 +41,19 @@
 
             <div class="category-pills">
                 {% for cat in categories %}
-                {% if cat.parent %}
-                <div class="category-pill" style="background: {{ cat.color }}99;"><span
-                        style="color: {{ cat.color }}; filter: brightness(0.5);">{{ cat.name }}</span></div>
-                {% else %}
-                <div class="category-pill" style="background: {{ cat.color }}99;"><span
-                        style="color: {{ cat.color }}; filter: brightness(0.5);"><b>{{ cat.name }}</b></span></div>
-                {% endif %}
+                <div class="category-pill" style="background: {{ cat.color }}99;">
+                    <span style="color: {{ cat.color }}; filter: brightness(0.5);">
+                        {% if cat.parent %}
+                            {{ cat.name }}
+                            <b>
+                        {% else %}
+                            <b>
+                            {{ cat.name }}
+                        {% endif %}
+                            <a href="{% url 'base:delete_category' cat.pk %}">х</a>
+                        </b>
+                    </span>
+                </div>
                 {% endfor %}
 
             </div>

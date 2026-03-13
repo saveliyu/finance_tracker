@@ -22,8 +22,9 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Family)
 class FamilyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'members_display')
+    list_display = ('name', 'slug', 'members_display')
     prepopulated_fields = {'slug': ('name',)}
+    list_filter = ('name',)
 
     def members_display(self, obj):
         return ", ".join([str(member) for member in obj.users.all()])

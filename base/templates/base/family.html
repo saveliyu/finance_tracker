@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main>
+    <section id="profilePage">
+
+        <div class="layout">
+
+            <!-- ЛЕВАЯ КОЛОНКА -->
+            <div class="main-column">
+
+                <!-- ПРОФИЛЬ -->
+                <div class="profile-card">
+
+                    <div class="profile-color-cloud" style="--cat-color: #4ade80;">
+                        <div class="profile-name">Иван Петров</div>
+                        <div class="profile-role">Родитель</div>
+                    </div>
+
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Всего потратил</div>
+                            <div class="stat-value">12 540 ₽</div>
+                        </div>
+
+                        <div class="stat-item">
+                            <div class="stat-label">В этом месяце</div>
+                            <div class="stat-value">3 210 ₽</div>
+                        </div>
+
+                        <div class="stat-item">
+                            <div class="stat-label">Категорий</div>
+                            <div class="stat-value">8</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- СЕМЬЯ -->
+                <div class="family-section">
+                    <div class="family-title">Члены семьи</div>
+                    {% for user in family %}
+                    <div class="family-card" style="background-color: {{ user.color }}99">
+
+                        <div class="family-content">
+                            <div class="family-top">
+                                <div class="family-name">Марияs</div>
+                                <div class="family-role">Ребёнок</div>
+                            </div>
+
+                            <div class="family-inline-stats">
+                                <span>Потрачено: <b>4 320 ₽</b></span>
+                                <span>•</span>
+                                <span>В этом месяце: <b>980 ₽</b></span>
+                                <span>•</span>
+                                <span>Категорий: <b>5</b></span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+
+            </div>
+
+            <!-- ПРАВАЯ КОЛОНКА — ДАШБОРД -->
+            <aside class="dashboard">
+                <div class="dashboard-title">Дашборд пользователя</div>
+
+                <div class="chart-block">
+                    <div class="chart-label">Распределение по категориям</div>
+                    <canvas id="userCategoryChart" height="180"></canvas>
+                </div>
+
+                <div class="chart-block">
+                    <div class="chart-label">Траты по месяцам</div>
+                    <canvas id="userMonthlyChart" height="200"></canvas>
+                </div>
+            </aside>
+
+        </div>
+
+    </section>
+</main>
+
+
+{% endblock %}

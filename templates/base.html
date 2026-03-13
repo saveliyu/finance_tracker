@@ -12,7 +12,8 @@
 <body>
 <header class="navbar">
     <a href="{% url 'base:home' %}"><div class="navbar-title">Finance Tracker</div></a>
-    <a href="{% url 'users:logout' %}">{{ user.name }}</a>
+    <a href="{% url 'users:logout' %}">Пользователь: {{ user.name }}</a>
+    <a href="{% url 'base:family' %}">Семья: {{ user.family }}</a>
     <a href="{% url 'base:add_category' %}" class="btn btn-outline">Добавить категорию</a>
 </header>
 
