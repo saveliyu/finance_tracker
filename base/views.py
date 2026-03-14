@@ -8,7 +8,7 @@ from base.models import Category, Purchase
 
 from datetime import datetime
 
-from users.models import Family
+from family.models import Family
 from .arrows_url import *
 from dashboard.dashboard import get_data_for_dashboard
 
@@ -28,9 +28,9 @@ class IndexView(TemplateView):
 
 @login_required(login_url='users:login')
 def table_view(request, year=None, month=None):
-    categories = Category.objects.filter(family=request.user.family).order_by('-parent')
-    users = get_object_or_404(Family, slug=request.user.family.slug).users.all()
-    print(users)
+    categories = Category.objects.all().order_by('-parent')
+    # users = get_object_or_404(Family, slug=request.user.family.slug).users.all()
+    users = get_user_model().objects.all()
     purchases = Purchase.objects.filter(date__year=year, date__month=list(MONTHS.keys()).index(month) + 1)
     clean_purchases = purchases
     if request.GET.get('user_filter'):
@@ -84,7 +84,7 @@ def add_purchase_view(request):
         if form.cleaned_data['user'] != request.user:
             return redirect(request.META.get('HTTP_REFERER', '/'))
         purchase = form.save(commit=False)
-        purchase.family = request.user.family
+        # purchase.family = request.user.family
         purchase.save()
         return redirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -104,7 +104,7 @@ def add_category_view(request):
         form = CategoryForm(request.POST)
         if form.is_valid():
             category = form.save(commit=False)
-            category.family = request.user.family
+            # category.family = request.user.family
             category.parent = form.cleaned_data['parent']
             category.save()
             return redirect(request.META.get('HTTP_REFERER', '/'))
@@ -124,10 +124,4 @@ def delete_category_view(request, pk):
     category.delete()
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
-def family_view(request):
-    family = request.user.family.users.all()
-    print(family)
-    context = {
-        'family': family,
-    }
-    return render(request, 'base/family.html', context)
+

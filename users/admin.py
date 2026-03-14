@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from users.models import CustomUser, Family
+from users.models import CustomUser
 
 
 @admin.register(CustomUser)
@@ -19,13 +19,3 @@ class CustomUserAdmin(UserAdmin):
             "fields": ("name", "color", "family",)
         }),
     )
-
-@admin.register(Family)
-class FamilyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'members_display')
-    prepopulated_fields = {'slug': ('name',)}
-    list_filter = ('name',)
-
-    def members_display(self, obj):
-        return ", ".join([str(member) for member in obj.users.all()])
-    members_display.short_description = "Members"

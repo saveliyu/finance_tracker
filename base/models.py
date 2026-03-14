@@ -3,7 +3,7 @@ from slugify import slugify
 
 from django.conf import settings
 
-from users.models import Family
+from family.models import Family
 
 
 class Category(models.Model):

@@ -13,7 +13,11 @@
 <header class="navbar">
     <a href="{% url 'base:home' %}"><div class="navbar-title">Finance Tracker</div></a>
     <a href="{% url 'users:logout' %}">Пользователь: {{ user.name }}</a>
-    <a href="{% url 'base:family' %}">Семья: {{ user.family }}</a>
+
+    <a href="{% url 'family:family' %}">
+        Семья:{% if user.family_object %} {{ user.family_object.name }} {% else %} Нет {% endif %}
+    </a>
+
     <a href="{% url 'base:add_category' %}" class="btn btn-outline">Добавить категорию</a>
 </header>
 

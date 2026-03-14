@@ -1,0 +1,24 @@
+<!-- СЕМЬЯ -->
+<div class="family-section">
+    <div class="family-title">Члены семьи</div>
+    {% for member in family_members %}
+    <div class="family-card" style="background-color: {{ member.user.color }}99">
+
+        <div class="family-content">
+            <div class="family-top">
+                <div class="family-name">{{ member.user.name }}</div>
+                <div class="family-role">{{ member.get_status_display }}</div>
+            </div>
+
+            <div class="family-inline-stats">
+                <span>Потрачено: <b>0 ₽</b></span>
+                <span>•</span>
+                <span>В этом месяце: <b>0 ₽</b></span>
+                <span>•</span>
+                <span>Категорий: <b>0</b></span>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</div>

@@ -1,0 +1,35 @@
+from django.db import models
+from django.conf import settings
+
+
+
+class Family(models.Model):
+    name = models.CharField(max_length=100,)
+    slug = models.SlugField(max_length=100, unique=True)
+
+    class Meta:
+        verbose_name_plural = "Families"
+
+    def __str__(self):
+        return self.name
+
+
+
+class FamilyMember(models.Model):
+    class Status(models.IntegerChoices):
+        MEMBER = 0, 'Участник'
+        CREATOR = 1, 'Создатель'
+        ADMINISTRATOR = 2, 'Админ'
+
+
+    family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name='members')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='family')
+    status = models.IntegerField(choices=Status.choices, default=Status.MEMBER)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Family Members"
+
+    def __str__(self):
+        return self.user.username
