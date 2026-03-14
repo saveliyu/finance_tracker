@@ -1,8 +1,12 @@
 from django.db.models import Sum
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from base.models import *
+from .forms import InviteForm
 
 from datetime import datetime
+
+from family.models import FamilyInvite, FamilyMember
+
 
 # Create your views here.
 def family_view(request):
@@ -24,3 +28,37 @@ def family_view(request):
         'profile_data': profile_data,
     }
     return render(request, 'family/family.html', context)
+
+def create_invite(request):
+    if request.user.family_object and not request.user.invites.exists():
+        invite = FamilyInvite()
+        invite.created_by = request.user
+        invite.family = request.user.family_object
+        invite.save()
+    return redirect('family:user_invite')
+
+
+def user_invite_view(request):
+    if FamilyInvite.objects.filter(created_by=request.user).exists():
+        invite = get_object_or_404(FamilyInvite, created_by=request.user)
+    else:
+        invite = None
+    context = {
+        'invite': invite,
+    }
+    return render(request, 'family/invite.html', context)
+
+def enter_invite_view(request):
+    form = InviteForm()
+    context = {
+        'form': form,
+    }
+    if request.method == 'POST':
+        form = InviteForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            if FamilyInvite.objects.filter(code=code).exists():
+                invite = FamilyInvite.objects.get(code=code)
+                FamilyMember.objects.create(family=invite.family, user=request.user, status=0)
+                invite.delete()
+    return render(request, 'family/enter_invite.html', context)

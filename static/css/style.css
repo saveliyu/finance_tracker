@@ -1028,3 +1028,65 @@ tbody tr:hover {
     margin: 1rem 0 0.5rem;
 }
 
+.invite-card {
+    max-width: 500px;
+    margin: 2rem auto;
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.invite-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.invite-code {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    padding: 1rem;
+    background: var(--accent-soft);
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+    color: var(--accent);
+}
+
+.invite-buttons {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.invite-buttons .btn {
+    flex: 1;
+    text-align: center;
+}
+
+.invite-delete-form {
+    flex: 1;
+}
+
+.invite-btn-left {
+    background: var(--accent);
+    color: #fff;
+}
+
+.invite-btn-right {
+    width: 100%;
+}
+
+.family-actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.family-actions .btn {
+    flex: 1; /* каждая кнопка занимает 50% */
+    text-align: center;
+}
+

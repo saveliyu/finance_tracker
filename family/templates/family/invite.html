@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main>
+    <div class="invite-card">
+
+        <div class="invite-title">Код приглашения</div>
+
+        <div class="invite-code">
+            {{ invite.code }}
+        </div>
+
+        <div class="invite-buttons">
+            <a href="https://t.me/share/url?url={{ invite.code }}" class="btn invite-btn-left">
+                Отправить другу
+            </a>
+
+            <form method="post" action="#" class="invite-delete-form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline invite-btn-right">
+                    Удалить приглашение
+                </button>
+            </form>
+        </div>
+
+    </div>
+</main>
+
+{% endblock %}

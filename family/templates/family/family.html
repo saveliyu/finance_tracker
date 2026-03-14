@@ -38,17 +38,21 @@
 
                 {% if members %}
                 {% include 'family/family_list.html' %}
-                <a href="#" class="btn add-member-btn">
+                <a href="{% url 'family:create_invite' %}" class="btn add-member-btn">
                     Добавить участника
                 </a>
                 {% else %}
                 <div class="no-family-message">
                     У вас пока нет созданной семьи.
                 </div>
-
-                <a href="#" class="btn add-member-btn">
-                    Создать семью
-                </a>
+                <div class="family-actions">
+                    <a href="#" class="btn add-member-btn">
+                        Создать семью
+                    </a>
+                    <a href="#" class="btn add-member-btn">
+                        Вступить в семью по коду
+                    </a>
+                </div>
                 {% endif %}
 
 
