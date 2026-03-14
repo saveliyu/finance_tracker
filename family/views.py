@@ -90,3 +90,23 @@ def enter_invite_view(request):
 
 
     return render(request, 'family/enter_invite.html', context)
+
+def delete_member(request, pk):
+    member = FamilyMember.objects.filter(user__pk=pk).first().user
+    user = request.user
+    if not member.family_object:
+        messages.error(request, 'Данный пользователь на данный момент не состоит в семье')
+    elif member == user:
+        messages.error(request, 'Вы не можете удалить самого себя')
+    elif member.family_object != user.family_object:
+        messages.error(request, 'Вы не можете удалить члена другой семьи')
+    elif not user.family.first().status:
+        messages.error(request, 'У вас не хватает прав для удаления')
+    elif member.family.first().status == 1:
+        messages.error(request, 'Вы не можете удалить создателя семьи')
+    else:
+        member.delete()
+        messages.success(request, f'Пользователь {member} удален')
+
+
+    return redirect('family:profile_family')

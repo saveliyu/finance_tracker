@@ -9,14 +9,22 @@
 
             <!-- ЛЕВАЯ КОЛОНКА -->
             <div class="main-column">
-                {% if messages.success %}
-                <div class="success-toast" id="successToast">
-                    <span class="success-toast-icon">✔</span>
+                <div class="messages" id="messages">
+                    {% if messages %}
                     {% for message in messages %}
-                    {{ message }}
+                        <div class="toast-modal
+                            {% if 'success' in message.tags %} toast-success {% endif %}
+                            {% if 'error' in message.tags %} toast-error {% endif %}">
+                        <span class="toast-icon">
+                            {% if 'success' in message.tags %}✔{% endif %}
+                            {% if 'error' in message.tags %}✖{% endif %}
+                        </span>
+                        <span>{{ message }}</span>
+                    </div>
                     {% endfor %}
+                    {% endif %}
                 </div>
-                {% endif %}
+
 
                 <!-- ПРОФИЛЬ -->
                 <div class="profile-card">
@@ -84,14 +92,60 @@
         </div>
 
     </section>
+    <!-- MODAL -->
+    <div class="modal-overlay" id="familyModal">
+        <div class="modal-window">
+            <div class="modal-title">Удалить участника?</div>
+            <div class="modal-text">Вы уверены, что хотите удалить этого члена семьи?</div>
+
+            <div class="modal-buttons">
+                <button class="btn btn-outline modal-btn" onclick="closeModal()">Отмена</button>
+                <button class="btn modal-btn" onclick="confirmDelete()">Удалить</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        setTimeout(() => {
-            const toast = document.getElementById("successToast");
-            if (toast) {
-                toast.style.animation = "toastFadeOut 0.4s ease forwards";
-            }
-        }, 3000);
+        let deleteUserId = null; // сюда запоминаем ID участника
+
+        // Открыть модалку
+        function openModal(userId) {
+            deleteUserId = userId; // запоминаем ID
+            const modal = document.getElementById("familyModal");
+            modal.style.display = "flex";
+            modal.style.opacity = "1";
+        }
+
+        // Закрыть модалку
+        function closeModal() {
+            const modal = document.getElementById("familyModal");
+
+            // плавное исчезновение
+            modal.style.opacity = "0";
+
+            setTimeout(() => {
+                modal.style.display = "none";
+            }, 250); // совпадает с CSS-анимацией
+        }
+
+        // Подтверждение удаления
+        function confirmDelete() {
+            const modal = document.getElementById("familyModal");
+
+            // запускаем анимацию исчезновения
+            modal.style.opacity = "0";
+
+            setTimeout(() => {
+                modal.style.display = "none";
+
+                // Переход на отдельный путь удаления
+                // ПОКА БЕЗ ДЖАНГО — просто выводим URL
+                window.location.href = "/family/delete_member/" + deleteUserId + "/";
+
+            }, 250);
+        }
     </script>
+
 
 </main>
 
