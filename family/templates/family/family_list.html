@@ -9,14 +9,19 @@
                 <div class="family-name">{{ member.user.name }}</div>
                 <div class="family-role">{{ member.get_status_display }}</div>
             </div>
-
-            <div class="family-inline-stats">
-                <span>Потрачено: <b>{{ value.user_sum }} ₽</b></span>
-                <span>•</span>
-                <span>В этом месяце: <b>{{ value.user_month_sum }} ₽</b></span>
-                <span>•</span>
-                <span>Категорий: <b>{{ value.user_month_cats }}</b></span>
+            <div class="family-bottom-row">
+                <div class="family-inline-stats">
+                    <span>Потрачено: <b>{{ value.user_sum }} ₽</b></span>
+                    <span>•</span>
+                    <span>В этом месяце: <b>{{ value.user_month_sum }} ₽</b></span>
+                    <span>•</span>
+                    <span>Категорий: <b>{{ value.user_month_cats }}</b></span>
+                </div>
+                {% if roots and not forloop.frist%}
+                    <a href="#" class="family-remove-link" title="Удалить">✕</a>
+                {% endif %}
             </div>
+
         </div>
     </div>
     {% endfor %}

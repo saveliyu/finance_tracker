@@ -16,12 +16,7 @@
                 Отправить другу
             </a>
 
-            <form method="post" action="#" class="invite-delete-form">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-outline invite-btn-right">
-                    Удалить приглашение
-                </button>
-            </form>
+            <a href="{% url 'family:delete_invite' %}" class="btn invite-btn-left">Удалить приглашение</a>
         </div>
 
     </div>

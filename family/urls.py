@@ -5,9 +5,11 @@ from . import views
 app_name = 'family'
 
 urlpatterns = [
-    path('', views.family_view, name='family'),
+    path('', views.profile_family_view, name='profile_family'),
     path('create_invite/', views.create_invite, name='create_invite'),
-    path('invite/', views.user_invite_view, name='user_invite'),
+    path('delete_invite/', views.delete_invite, name='delete_invite'),
+    path('login_by_invite/<str:code>/', views.login_by_invite, name='login_by_invite'),
+    path('invite/', views.invite_view, name='invite'),
     path('enter_invite/', views.enter_invite_view, name='enter_invite'),
 
 ]

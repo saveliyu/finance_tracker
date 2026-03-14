@@ -9,6 +9,14 @@
 
             <!-- ЛЕВАЯ КОЛОНКА -->
             <div class="main-column">
+                {% if messages.success %}
+                <div class="success-toast" id="successToast">
+                    <span class="success-toast-icon">✔</span>
+                    {% for message in messages %}
+                    {{ message }}
+                    {% endfor %}
+                </div>
+                {% endif %}
 
                 <!-- ПРОФИЛЬ -->
                 <div class="profile-card">
@@ -76,6 +84,15 @@
         </div>
 
     </section>
+    <script>
+        setTimeout(() => {
+            const toast = document.getElementById("successToast");
+            if (toast) {
+                toast.style.animation = "toastFadeOut 0.4s ease forwards";
+            }
+        }, 3000);
+    </script>
+
 </main>
 
 

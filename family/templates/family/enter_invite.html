@@ -6,29 +6,25 @@
     <div class="invite-card">
 
         <div class="invite-title">Код приглашения</div>
+        {% for message in messages %}
+        <div class="invite-message">
+            {{ message }}
+        </div>
+        {% endfor %}
+        <form action="" method="POST">
 
         <div class="invite-code">
-            <form action="" method="POST">
                 {% csrf_token %}
-                {% for f in form %}
-                    {{ f }}
-                {% endfor %}
-            </form>
+                <div style="margin: auto;">{{ form.code }}</div>
         </div>
 
         <div class="invite-buttons">
-            <a href="https://t.me/share/url?url={{ invite.code }}" class="btn invite-btn-left">
-                Отправить другу
-            </a>
-
-            <form method="post" action="#" class="invite-delete-form">
-                {% csrf_token %}
                 <button type="submit" class="btn btn-outline invite-btn-right">
-                    Удалить приглашение
+                    Войти
                 </button>
-            </form>
-        </div>
 
+        </div>
+        </form>
     </div>
 </main>
 

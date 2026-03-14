@@ -14,7 +14,7 @@
     <a href="{% url 'base:home' %}"><div class="navbar-title">Finance Tracker</div></a>
     <a href="{% url 'users:logout' %}">Пользователь: {{ user.name }}</a>
 
-    <a href="{% url 'family:family' %}">
+    <a href="{% url 'family:profile_family' %}">
         Семья:{% if user.family_object %} {{ user.family_object.name }} {% else %} Нет {% endif %}
     </a>
 
