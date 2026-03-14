@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Family, FamilyMember
+from .models import Family, FamilyMember, FamilyInvite
+
 
 @admin.register(Family)
 class FamilyAdmin(admin.ModelAdmin):
@@ -17,3 +18,7 @@ class FamilyAdmin(admin.ModelAdmin):
 class FamilyMemberAdmin(admin.ModelAdmin):
     list_display = ('user', 'family', 'status')
     list_filter = ('status',)
+
+@admin.register(FamilyInvite)
+class FamilyInviteAdmin(admin.ModelAdmin):
+    list_display = ('created_by', 'family', 'code', 'created_at', 'expires_at')
