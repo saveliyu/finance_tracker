@@ -56,7 +56,7 @@ def get_products_per_day(purchases) -> dict:
     if products_per_day == 0:
         return {'products_per_day': 0}
     else:
-        products_per_day /= (purchases[0].date.day - purchases.last().date.day)
+        products_per_day /= (1 + purchases[0].date.day - purchases.last().date.day)
         return {'products_per_day': round(products_per_day, 2)}
 
 
