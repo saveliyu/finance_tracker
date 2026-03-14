@@ -84,7 +84,7 @@ def add_purchase_view(request):
         if form.cleaned_data['user'] != request.user:
             return redirect(request.META.get('HTTP_REFERER', '/'))
         purchase = form.save(commit=False)
-        # purchase.family = request.user.family
+        purchase.family = request.user.family_object
         purchase.save()
         return redirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -104,7 +104,7 @@ def add_category_view(request):
         form = CategoryForm(request.POST)
         if form.is_valid():
             category = form.save(commit=False)
-            # category.family = request.user.family
+            category.family = request.user.family_object
             category.parent = form.cleaned_data['parent']
             category.save()
             return redirect(request.META.get('HTTP_REFERER', '/'))

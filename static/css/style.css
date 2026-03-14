@@ -1002,3 +1002,29 @@ tbody tr:hover {
 .family-inline-stats b {
     color: var(--text);
 }
+
+.add-member-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    border-radius: var(--radius);
+    background: var(--accent);
+    color: #fff;
+    transition: 0.15s;
+}
+
+.add-member-btn:hover {
+    background: #1e4fc7;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+.no-family-message {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 1rem 0 0.5rem;
+}
+
