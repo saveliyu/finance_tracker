@@ -5,6 +5,8 @@ from django.conf import settings
 
 from slugify import slugify
 
+from family.models import FamilyMember
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, password, name=None, color=None, **extra_fields):
@@ -36,7 +38,7 @@ class CustomUser(AbstractUser):
     @property
     def family_members(self):
         family = self.family_object
-        return family.members if family else None
+        return family.members.all() if family else FamilyMember.objects.none()
 
     def __str__(self):
         return self.username

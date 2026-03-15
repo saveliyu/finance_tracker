@@ -1,32 +1,34 @@
-from django.db.models import Sum
 from django.shortcuts import render, redirect
 from base.models import *
 from .forms import InviteForm
 from django.contrib import messages
 
-from django.utils import timezone
+from family.models import FamilyInvite
+from family.utils import *
 
-from family.models import FamilyInvite, FamilyMember
+from users.models import *
 
 
 def profile_family_view(request):
-    family_members = request.user.family_members.all().order_by('-status')
+    family_member = request.user.family.first()
 
+    if not family_member:
+        return render(request, 'family/family.html', {
+            'profile_data': get_profile_stats(Purchase.objects.filter(user=request.user)),
+            'roots': False,
+        })
+
+    users = CustomUser.objects.filter(
+        family__family=family_member.family
+    )
+
+    all_purchases = Purchase.objects.filter(user__in=users)
     members = dict()
+    for user in users:
+        members[user] = get_profile_stats(all_purchases.filter(user=user))
 
-    for member in family_members:
-        purchase = Purchase.objects.filter(user=member.user)
-        user_sum = purchase.aggregate(Sum('price'))['price__sum']
-        user_month = purchase.filter(date__month=timezone.now().month)
-        user_month_sum = user_month.aggregate(Sum('price'))['price__sum']
-        user_month_cats = user_month.values('category').distinct().count()
-        members[member] = {'user_sum': user_sum, 'user_month_sum': user_month_sum, 'user_month_cats': user_month_cats}
-
-
-    profile_member = family_members.filter(user=request.user).first()
-    profile_data = members.get(profile_member)
-
-    roots = bool(profile_member.status)
+    profile_data = members.get(request.user)
+    roots = bool(family_member.status)
 
     context = {
         'members': members,
@@ -35,6 +37,11 @@ def profile_family_view(request):
     }
 
     return render(request, 'family/family.html', context)
+
+
+def create_family_view(request):
+    pass
+    return render(request, 'family/create_family.html')
 
 
 def create_invite(request):
@@ -88,8 +95,8 @@ def enter_invite_view(request):
         'form': form,
     }
 
-
     return render(request, 'family/enter_invite.html', context)
+
 
 def delete_member(request, pk):
     member = FamilyMember.objects.filter(user__pk=pk).first().user
@@ -105,8 +112,7 @@ def delete_member(request, pk):
     elif member.family.first().status == 1:
         messages.error(request, 'Вы не можете удалить создателя семьи')
     else:
-        member.delete()
+        member.family.all().delete()
         messages.success(request, f'Пользователь {member} удален')
-
 
     return redirect('family:profile_family')

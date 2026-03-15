@@ -2,12 +2,12 @@
 <div class="family-section">
     <div class="family-title">Члены семьи</div>
     {% for member, value in members.items %}
-    <div class="family-card" style="background-color: {{ member.user.color }}99">
+    <div class="family-card" style="background-color: {{ user.color }}99">
 
         <div class="family-content">
             <div class="family-top">
-                <div class="family-name">{{ member.user.name }}</div>
-                <div class="family-role">{{ member.get_status_display }}</div>
+                <div class="family-name">{{ user.name }}</div>
+                <div class="family-role">{{ user.family.first.get_status_display }}</div>
             </div>
             <div class="family-bottom-row">
                 <div class="family-inline-stats">
