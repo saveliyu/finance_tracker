@@ -10,6 +10,17 @@ from users.models import *
 
 
 def profile_family_view(request):
+    if request.method == 'POST':
+        member_status = request.POST.get('member_status')
+        member_pk = request.POST.get('member_pk')
+
+        member = CustomUser.objects.get(pk=member_pk).family.first()
+
+        member.status = int(member_status)
+        member.save()
+
+        return redirect('family:profile_family')
+
     family_member = request.user.family.first()
 
     if not family_member:
@@ -29,11 +40,13 @@ def profile_family_view(request):
 
     profile_data = members.get(request.user)
     roots = bool(family_member.status)
+    statuses = [x for x in FamilyMember.Status.choices if x[0] != FamilyMember.Status.CREATOR]
 
     context = {
         'members': members,
         'profile_data': profile_data,
         'roots': roots,
+        'statuses': statuses,
     }
 
     return render(request, 'family/family.html', context)

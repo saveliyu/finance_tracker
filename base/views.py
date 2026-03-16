@@ -27,7 +27,6 @@ class IndexView(TemplateView):
         }
         return context
 
-# ДОДЕЛАТЬ ЭТУ ЗАЛУПУ ->
 
 @login_required(login_url='users:login')
 def table_view(request, year=None, month=None):
@@ -120,7 +119,6 @@ def add_category_view(request):
         else:
             return redirect(request.META.get('HTTP_REFERER', '/'))
 
-
     context = {
         'categories': categories,
         'form': form,
@@ -132,5 +130,3 @@ def delete_category_view(request, pk):
     category = Category.objects.get(pk=pk)
     category.delete()
     return redirect(request.META.get('HTTP_REFERER', '/'))
-
-

@@ -1350,3 +1350,71 @@ tbody tr:hover {
     }
 }
 
+.family-top select {
+    border-radius: 999px;
+    background: #fff;
+    padding: 0.35rem 1.8rem 0.35rem 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text);
+    cursor: pointer;
+
+    /* убираем стандартный вид */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    /* стрелочка */
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%236b7280' height='18' viewBox='0 0 20 20' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M5 7l5 5 5-5'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+
+    /* чтобы не прыгал */
+    height: 32px;
+    line-height: 32px;
+}
+
+.family-top form {
+    margin: 0;
+}
+
+.family-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.family-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* ← ВАЖНО: выравнивает по центру */
+}
+
+/* Селект в стиле сайта */
+.family-top select {
+    height: 28px; /* ровно как текст */
+    padding: 0 32px 0 12px;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 0.85rem;
+    color: var(--text);
+    cursor: pointer;
+    width: 130px;
+
+    /* убираем стандартный вид */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    /* стрелочка */
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%236b7280' height='18' viewBox='0 0 20 20' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M5 7l5 5 5-5'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+
+    line-height: 28px; /* ← выравнивает текст внутри */
+}
+
+/* Чтобы форма не ломала высоту */
+.family-top form {
+    margin: 0;
+    padding: 0;
+}

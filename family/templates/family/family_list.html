@@ -2,12 +2,31 @@
 <div class="family-section">
     <div class="family-title">Члены семьи</div>
     {% for member, value in members.items %}
-    <div class="family-card" style="background-color: {{ user.color }}99">
+    <div class="family-card" style="background-color: {{ member.color }}99">
 
         <div class="family-content">
             <div class="family-top">
-                <div class="family-name">{{ user.name }}</div>
-                <div class="family-role">{{ user.family.first.get_status_display }}</div>
+                <div class="family-name">{{ member.name }}</div>
+                <div class="family-role">
+                    {% if member != user and member.family.first.status != member.family.first.Status.CREATOR %}
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="member_pk" value="{{ member.pk }}">
+
+                        <select name="member_status" id="{{ member.pk }}" onchange="this.form.submit()"
+                                style="background-color: {{ member.color }}99">
+                            {% for status in statuses %}
+                            <option value="{{ status.0 }}" {% if status.0 == member.family.first.status %} selected {% endif %}>{{ status.1 }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                    {% else %}
+                    <select disabled>
+                        <option value="">{{ member.family.first.get_status_display }}</option>
+                    </select>
+                    {% endif %}
+                </div>
             </div>
             <div class="family-bottom-row">
                 <div class="family-inline-stats">
@@ -18,7 +37,7 @@
                     <span>Категорий: <b>{{ value.user_month_cats }}</b></span>
                 </div>
                 {% if roots and not forloop.frist%}
-                    <a href="#" class="family-remove-link" onclick="openModal({{ member.user.pk }})">✕</a>
+                <a href="#" class="family-remove-link" onclick="openModal({{ member.user.pk }})">✕</a>
                 {% endif %}
             </div>
 
