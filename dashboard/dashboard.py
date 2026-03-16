@@ -64,7 +64,7 @@ def get_data_for_dashboard(clean_purchases, purchases, categories, users, parent
     if parents:
         category_data = get_parrent_category_dashboard_data(clean_purchases, categories)
     else:
-        category_data = get_category_dashboard_data(clean_purchases, categories)
+        category_data = get_category_dashboard_data(purchases, categories)
     person_data = get_person_dashboard_data(purchases, users)
 
     products_per_day = get_products_per_day(clean_purchases)

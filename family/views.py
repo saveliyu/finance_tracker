@@ -40,7 +40,6 @@ def profile_family_view(request):
 
 
 def create_family_view(request):
-    pass
     return render(request, 'family/create_family.html')
 
 

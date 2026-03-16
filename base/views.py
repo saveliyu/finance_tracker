@@ -26,6 +26,8 @@ class IndexView(TemplateView):
         }
         return context
 
+# ДОДЕЛАТЬ ЭТУ ЗАЛУПУ ->
+
 @login_required(login_url='users:login')
 def table_view(request, year=None, month=None):
     categories = Category.objects.all().order_by('-parent')

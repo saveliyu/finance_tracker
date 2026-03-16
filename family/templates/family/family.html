@@ -62,10 +62,10 @@
                     У вас пока нет созданной семьи.
                 </div>
                 <div class="family-actions">
-                    <a href="#" class="btn add-member-btn">
+                    <a href="{% url 'family:create_family' %}" class="btn add-member-btn">
                         Создать семью
                     </a>
-                    <a href="#" class="btn add-member-btn">
+                    <a href="{% url 'family:enter_invite' %}" class="btn add-member-btn">
                         Вступить в семью по коду
                     </a>
                 </div>
