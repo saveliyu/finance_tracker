@@ -9,6 +9,7 @@ from base.models import Category, Purchase
 from datetime import datetime
 
 from family.models import Family
+from users.models import CustomUser
 from .arrows_url import *
 from dashboard.dashboard import get_data_for_dashboard
 
@@ -31,9 +32,15 @@ class IndexView(TemplateView):
 @login_required(login_url='users:login')
 def table_view(request, year=None, month=None):
     categories = Category.objects.all().order_by('-parent')
-    # users = get_object_or_404(Family, slug=request.user.family.slug).users.all()
-    users = get_user_model().objects.all()
-    purchases = Purchase.objects.filter(date__year=year, date__month=list(MONTHS.keys()).index(month) + 1)
+    family_object = request.user.family_object
+
+    users_pk = list()
+    for user in request.user.family_members:
+        users_pk.append(user.user.pk)
+    users = CustomUser.objects.filter(pk__in=users_pk)
+
+    date_month = list(MONTHS.keys()).index(month) + 1
+    purchases = Purchase.objects.filter(date__year=year, date__month=date_month, user__pk__in=users_pk)
     clean_purchases = purchases
     if request.GET.get('user_filter'):
         user_filter = request.GET.get('user_filter')
