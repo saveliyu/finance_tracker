@@ -12,7 +12,7 @@
                 <div class="messages" id="messages">
                     {% if messages %}
                     {% for message in messages %}
-                        <div class="toast-modal
+                    <div class="toast-modal
                             {% if 'success' in message.tags %} toast-success {% endif %}
                             {% if 'error' in message.tags %} toast-error {% endif %}">
                         <span class="toast-icon">
@@ -62,10 +62,10 @@
                     У вас пока нет созданной семьи.
                 </div>
                 <div class="family-actions">
-                    <a href="#" class="btn add-member-btn">
+                    <a href="{% url 'family:create_family' %}" class="btn add-member-btn">
                         Создать семью
                     </a>
-                    <a href="#" class="btn add-member-btn">
+                    <a href="{% url 'family:enter_invite' %}" class="btn add-member-btn">
                         Вступить в семью по коду
                     </a>
                 </div>
@@ -74,20 +74,7 @@
 
             </div>
 
-            <!-- ПРАВАЯ КОЛОНКА — ДАШБОРД -->
-            <aside class="dashboard">
-                <div class="dashboard-title">Дашборд пользователя</div>
 
-                <div class="chart-block">
-                    <div class="chart-label">Распределение по категориям</div>
-                    <canvas id="userCategoryChart" height="180"></canvas>
-                </div>
-
-                <div class="chart-block">
-                    <div class="chart-label">Траты по месяцам</div>
-                    <canvas id="userMonthlyChart" height="200"></canvas>
-                </div>
-            </aside>
 
         </div>
 
@@ -95,8 +82,22 @@
     <!-- MODAL -->
     <div class="modal-overlay" id="familyModal">
         <div class="modal-window">
+
             <div class="modal-title">Удалить участника?</div>
             <div class="modal-text">Вы уверены, что хотите удалить этого члена семьи?</div>
+
+            <div class="modal-buttons">
+                <button class="btn btn-outline modal-btn" onclick="closeModal()">Отмена</button>
+                <button class="btn modal-btn" onclick="confirmDelete()">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="self_familyModal">
+        <div class="modal-window">
+
+            <div class="modal-title">Покинуть семью?</div>
+            <div class="modal-text">Вы уверены, что хотите выйти из этой семьи?</div>
 
             <div class="modal-buttons">
                 <button class="btn btn-outline modal-btn" onclick="closeModal()">Отмена</button>
@@ -111,14 +112,24 @@
         // Открыть модалку
         function openModal(userId) {
             deleteUserId = userId; // запоминаем ID
-            const modal = document.getElementById("familyModal");
+            let modal;
+            if (deleteUserId == "{{ user.pk }}") {
+                modal = document.getElementById("self_familyModal");
+            }
+            else {
+                modal = document.getElementById("familyModal");}
             modal.style.display = "flex";
             modal.style.opacity = "1";
         }
 
         // Закрыть модалку
         function closeModal() {
-            const modal = document.getElementById("familyModal");
+            let modal;
+                if (deleteUserId == "{{ user.pk }}") {
+                    modal = document.getElementById("self_familyModal");
+                }
+                else {
+                    modal = document.getElementById("familyModal");}
 
             // плавное исчезновение
             modal.style.opacity = "0";
@@ -130,7 +141,12 @@
 
         // Подтверждение удаления
         function confirmDelete() {
-            const modal = document.getElementById("familyModal");
+            let modal;
+            if (deleteUserId == "{{ user.pk }}") {
+                modal = document.getElementById("self_familyModal");
+            }
+            else {
+                modal = document.getElementById("familyModal");}
 
             // запускаем анимацию исчезновения
             modal.style.opacity = "0";

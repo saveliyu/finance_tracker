@@ -11,12 +11,17 @@
 
 <body>
 <header class="navbar">
-    <a href="{% url 'base:home' %}"><div class="navbar-title">Finance Tracker</div></a>
-    <a href="{% url 'users:logout' %}">Пользователь: {{ user.name }}</a>
+    <a href="{% url 'base:home' %}" class="navbar-title">Finance Tracker</a>
 
-    <a href="{% url 'family:profile_family' %}">
-        Семья:{% if user.family_object %} {{ user.family_object.name }} {% else %} Нет {% endif %}
-    </a>
+    <div class="navbar-center">
+        <a href="{% url 'users:logout' %}" class="navbar-link">Пользователь: {{ user.name }}</a>
+        {% if user.family_object %}
+        <a href="{% url 'family:profile_family' %}" class="navbar-link">Семья: {{ user.family_object.name }}</a>
+        {% else %}
+        <a href="{% url 'family:create_family' %}" class="navbar-link">Создать семью</a>
+
+        {% endif %}
+    </div>
 
     <a href="{% url 'base:add_category' %}" class="btn btn-outline">Добавить категорию</a>
 </header>
