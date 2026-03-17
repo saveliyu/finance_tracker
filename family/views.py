@@ -14,14 +14,14 @@ def profile_family_view(request):
         member_status = request.POST.get('member_status')
         member_pk = request.POST.get('member_pk')
 
-        member = CustomUser.objects.get(pk=member_pk).family.first()
+        member = CustomUser.objects.get(pk=member_pk).family_member
 
         member.status = int(member_status)
         member.save()
 
         return redirect('family:profile_family')
 
-    family_member = request.user.family.first()
+    family_member = request.user.get_family_member
 
     if not family_member:
         return render(request, 'family/family.html', {
@@ -30,7 +30,7 @@ def profile_family_view(request):
         })
 
     users = CustomUser.objects.filter(
-        family__family=family_member.family
+        family_member__family=family_member.family
     )
 
     all_purchases = Purchase.objects.filter(user__in=users)
@@ -40,6 +40,7 @@ def profile_family_view(request):
 
     profile_data = members.get(request.user)
     roots = bool(family_member.status)
+    print(FamilyMember.Status.choices)
     statuses = [x for x in FamilyMember.Status.choices if x[0] != FamilyMember.Status.CREATOR]
 
     context = {
@@ -69,7 +70,7 @@ def create_invite(request):
 def delete_invite(request):
     request.user.invites.all().delete()
 
-    return redirect('family:profile_family')
+    return redirect('family:create_invite')
 
 
 def login_by_invite(request, code):
@@ -80,6 +81,9 @@ def login_by_invite(request, code):
         return redirect('family:enter_invite')
     if FamilyMember.objects.filter(family=invite.family, user=request.user).exists():
         messages.error(request, 'Вы уже состоите в этой семье')
+        return redirect('family:enter_invite')
+    if FamilyMember.objects.filter(user=request.user).exists():
+        messages.error(request, 'Вы уже состоите в другой семье')
         return redirect('family:enter_invite')
     else:
         FamilyMember.objects.create(family=invite.family, user=request.user, status=0)
@@ -113,18 +117,19 @@ def enter_invite_view(request):
 def delete_member(request, pk):
     member = FamilyMember.objects.filter(user__pk=pk).first().user
     user = request.user
-    if not member.family_object:
+    if member == user:
+        member.family_member.delete()
+        messages.success(request, f'Вы успешно вышли из семьи')
+    elif not member.family_object:
         messages.error(request, 'Данный пользователь на данный момент не состоит в семье')
-    elif member == user:
-        messages.error(request, 'Вы не можете удалить самого себя')
     elif member.family_object != user.family_object:
         messages.error(request, 'Вы не можете удалить члена другой семьи')
-    elif not user.family.first().status:
+    elif not user.family_member.status:
         messages.error(request, 'У вас не хватает прав для удаления')
-    elif member.family.first().status == 1:
+    elif member.family_member.status == 1:
         messages.error(request, 'Вы не можете удалить создателя семьи')
     else:
-        member.family.all().delete()
+        member.family_member.delete()
         messages.success(request, f'Пользователь {member} удален')
 
     return redirect('family:profile_family')

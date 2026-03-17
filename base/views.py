@@ -31,7 +31,6 @@ class IndexView(TemplateView):
 @login_required(login_url='users:login')
 def table_view(request, year=None, month=None):
     categories = Category.objects.all().order_by('-parent')
-    family_object = request.user.family_object
 
     users_pk = list()
     for user in request.user.family_members:

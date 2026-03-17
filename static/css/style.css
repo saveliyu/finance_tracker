@@ -1096,7 +1096,26 @@ tbody tr:hover {
     outline: none;
     font-size: 36px;
     text-align: center
+    color: var(--accent);
 }
+
+.invite-code input {
+    background: transparent;
+    border: none;
+    outline: none;
+
+    font-size: 2.2rem;          /* как у текста */
+    font-weight: 700;           /* как у текста */
+    letter-spacing: 4px;        /* как у текста */
+    color: var(--accent);       /* как у текста */
+
+    text-align: center;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+
+}
+
 
 .invite-code {
     display: flex;
@@ -1418,3 +1437,13 @@ tbody tr:hover {
     margin: 0;
     padding: 0;
 }
+
+.family-title {
+    display: flex;
+    justify-content: space-between; /* текст слева, кнопка справа */
+    align-items: center;            /* выравнивание по вертикали */
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+

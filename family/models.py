@@ -29,7 +29,8 @@ class FamilyMember(models.Model):
 
 
     family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name='members')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='family')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='family_member')
+
     status = models.IntegerField(choices=Status.choices, default=Status.MEMBER)
 
     created_at = models.DateTimeField(auto_now_add=True)

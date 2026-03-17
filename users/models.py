@@ -32,8 +32,18 @@ class CustomUser(AbstractUser):
 
     @property
     def family_object(self):
-        member = self.family.first()
+        try:
+            member = self.family_member
+        except:
+            return None
         return member.family if member else None
+
+    @property
+    def get_family_member(self):
+        try:
+            return self.family_member
+        except:
+            return None
 
     @property
     def family_members(self):
