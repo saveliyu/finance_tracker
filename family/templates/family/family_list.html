@@ -8,6 +8,7 @@
             <div class="family-top">
                 <div class="family-name">{{ member.name }}</div>
                 <div class="family-role">
+                    {% if roots %}
                     {% if member != user and member.family.first.status != member.family.first.Status.CREATOR %}
                     <form method="POST">
                         {% csrf_token %}
@@ -25,6 +26,9 @@
                     <select disabled>
                         <option value="">{{ member.family.first.get_status_display }}</option>
                     </select>
+                    {% endif %}
+                    {% else %}
+                        {{ member.family.first.get_status_display }}
                     {% endif %}
                 </div>
             </div>
