@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from base.models import *
 from .forms import InviteForm
@@ -40,7 +41,6 @@ def profile_family_view(request):
 
     profile_data = members.get(request.user)
     roots = bool(family_member.status)
-    print(FamilyMember.Status.choices)
     statuses = [x for x in FamilyMember.Status.choices if x[0] != FamilyMember.Status.CREATOR]
 
     context = {
@@ -57,18 +57,49 @@ def create_family_view(request):
     return render(request, 'family/create_family.html')
 
 
+@login_required(login_url='users:login')
+def invite_view(request):
+    invites = FamilyInvite.objects.filter(created_by=request.user)
+    if invites:
+        invite = invites.first()
+    else:
+        return redirect('family:create_invite')
+
+    return render(request, 'family/invite.html', {'invite': invite})
+
+
+@login_required(login_url='users:login')
+def enter_invite_view(request):
+    form = InviteForm()
+
+    if request.method == 'POST':
+        form = InviteForm(request.POST)
+
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            return redirect('family:login_by_invite', code=code)
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'family/enter_invite.html', context)
+
+
+@login_required(login_url='users:login')
 def create_invite(request):
     family = request.user.family_object
 
-    if family and not request.user.invites.exists():
+    if family and not hasattr(request.user, 'invites'):
         invite = FamilyInvite(created_by=request.user, family=family)
         invite.save()
 
     return redirect('family:invite')
 
 
+@login_required(login_url='users:login')
 def delete_invite(request):
-    request.user.invites.all().delete()
+    if hasattr(request.user, 'invites'):
+        request.user.invites.delete()
 
     return redirect('family:create_invite')
 
@@ -92,30 +123,14 @@ def login_by_invite(request, code):
     return redirect('family:profile_family')
 
 
-def invite_view(request):
-    invite = FamilyInvite.objects.filter(created_by=request.user).first()
-
-    return render(request, 'family/invite.html', {'invite': invite})
-
-
-def enter_invite_view(request):
-    form = InviteForm()
-
-    if request.method == 'POST':
-        form = InviteForm(request.POST)
-
-        if form.is_valid():
-            code = form.cleaned_data['code']
-            return redirect('family:login_by_invite', code=code)
-    context = {
-        'form': form,
-    }
-
-    return render(request, 'family/enter_invite.html', context)
-
-
 def delete_member(request, pk):
-    member = FamilyMember.objects.filter(user__pk=pk).first().user
+    family_member = FamilyMember.objects.filter(user__pk=pk).first()
+    if family_member:
+        member = family_member.user
+    else:
+        messages.success(request, f'Такого пользователя не существует')
+        return redirect('family:profile_family')
+
     user = request.user
     if member == user:
         member.family_member.delete()

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from datetime import timedelta
+from slugify import slugify
 
 
 
@@ -18,6 +19,17 @@ class Family(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.name)
+            slug = base_slug
+            counter = 1
+            while Family.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
 
 
 
@@ -42,11 +54,13 @@ class FamilyMember(models.Model):
         return self.user.username
 
 
+
+
 class FamilyInvite(models.Model):
     family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name='invites')
     code = models.CharField(max_length=8, unique=True, blank=True, editable=False)
 
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='invites')
+    created_by = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='invites')
 
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(null=True, blank=True)
