@@ -1447,3 +1447,64 @@ tbody tr:hover {
     font-weight: 600;
 }
 
+.invite-code {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px; /* расстояние между кодом и кнопкой */
+}
+
+.copy-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.4rem;
+    color: var(--accent);
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    transition: 0.15s ease;
+}
+
+.copy-btn:hover {
+    transform: scale(1.15);
+    color: #1e4fc7;
+}
+
+.invite-code {
+    position: relative;
+    display: flex;
+    justify-content: center; /* код по центру */
+    align-items: center;
+    padding-right: 40px; /* место под иконку справа */
+}
+
+/* сам код */
+.invite-code-text {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--accent);
+}
+
+/* кнопка копирования справа */
+.copy-btn {
+    position: absolute;
+    right: 12px; /* в самый правый край */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.4rem;
+    color: var(--accent);
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    transition: 0.15s ease;
+}
+
+.copy-btn:hover {
+    transform: scale(1.15);
+    color: #1e4fc7;
+}
+
