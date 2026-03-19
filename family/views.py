@@ -1,11 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from base.models import *
-from .forms import InviteForm
 from django.contrib import messages
 
 from family.models import FamilyInvite
 from family.utils import *
+from family.forms import InviteForm, FamilyForm
+
+from base.models import *
 
 from users.models import *
 
@@ -54,7 +55,10 @@ def profile_family_view(request):
 
 
 def create_family_view(request):
-    return render(request, 'family/create_family.html')
+    form = FamilyForm
+
+    context = {'form': form}
+    return render(request, 'family/create_family.html', context)
 
 
 @login_required(login_url='users:login')

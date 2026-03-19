@@ -29,6 +29,7 @@ def get_category_dashboard_data(purchases, categories) -> dict:
         category_labels.append(c['category__name'])
         category_totals.append(float(c['total']))
         category_obj = categories.get(id=c['category__id'])
+        print(f'obj: {category_obj}, c: {c}')
         category_colors.append(category_obj.color)
     return {'category_labels': category_labels,
         'category_totals': category_totals,

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main>
+
+    <div class="card">
+        {% include 'messages.html' %}
+
+        <div class="page-header">
+            <div class="page-title">{% block form_title %} {% endblock %}</div>
+            <a href="javascript:history.back()" class="btn">
+                ← Назад
+            </a>
+        </div>
+
+        <form class="form" method="POST">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+            <div class="form-error">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+            {% for f in form %}
+
+            <div class="category-form-row">
+                <label class="label">{{ f.label }}</label>
+                {{ f }}
+            </div>
+            {% if f.errors %}
+            <div class="form-error">
+                {{ f.errors }}
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            {% block form_info %} {% endblock %}
+            <button type="submit" class="btn">{% block submit_button %} {% endblock %}</button>
+
+        </form>
+        {% block form_footer %}
+
+        {% endblock %}
+
+    </div>
+
+</main>
+{% endblock %}

@@ -65,7 +65,6 @@ main {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  width: 60%;
   margin: auto;
 }
 
@@ -502,6 +501,7 @@ main {
 .label {
   font-size: 0.75rem;
   color: var(--muted);
+  margin-bottom: 12px;
 }
 
 input[type="text"] {
@@ -550,6 +550,7 @@ input[type="text"] {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem;
+  margin-top: 12px;
 }
 
 .category-pill {
@@ -575,10 +576,8 @@ input[type="text"] {
   border-radius: 999px;
 }
 
-.form-control {
-    height: 30px;
-    border-radius: 999px;
-}
+
+
 
 /* Chrome, Edge, Safari */
 input[type=number]::-webkit-inner-spin-button,
@@ -730,19 +729,9 @@ tbody tr:hover {
     /* можно подстроить размер toggle, если нужно */
 }
 
-.form-control {
-    width: 100%;
-    height: 42px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    padding: 0 14px;
-    font-size: 0.9rem;
-    background: #fff;
-}
 
-.form-control::placeholder {
-    text-align: center;
-}
+
+
 
 .select-input {
     text-align: center; /* текст по центру */
@@ -1323,6 +1312,8 @@ tbody tr:hover {
     gap: 0.6rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     z-index: 9999;
+
+    pointer-events: none;
 }
 
 /* УСПЕХ */
@@ -1551,3 +1542,68 @@ tbody tr:hover {
     color: var(--text);
 }
 
+.form-control {
+    width: 100%;
+    height: 42px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    padding: 0 14px;
+    font-size: 0.9rem;
+    background: #fff;
+    text-align: center;
+}
+
+.form-control::placeholder {
+    text-align: center;
+}
+
+.input-right {
+    text-align: left;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar-center {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* или 6px / 10px — как тебе нравится */
+}
+
+/* если хочешь прям слитно */
+.navbar-right a {
+    margin: 0;
+}
+.navbar {
+    position: sticky;
+    top: 0;
+    background: #ffffffcc;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 1rem;
+
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+}
+
+.navbar-title {
+    justify-self: start;
+}
+
+.navbar-center {
+    justify-self: center;
+}
+
+.navbar-right {
+    justify-self: end;
+}

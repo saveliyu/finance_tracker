@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from base.forms import PurchaseForm, CategoryForm
 from base.models import Category, Purchase
@@ -25,15 +26,16 @@ class IndexView(TemplateView):
             'month': month,
             'year': year
         }
+        print(context)
         return context
 
 
 @login_required(login_url='users:login')
 def table_view(request, year=None, month=None):
     categories = Category.objects.all().order_by('-parent')
-
+    family_members = request.user.family_members.select_related('user')
     users_pk = list()
-    for user in request.user.family_members:
+    for user in family_members:
         users_pk.append(user.user.pk)
     users = CustomUser.objects.filter(pk__in=users_pk)
 
@@ -105,7 +107,14 @@ def delete_purchase_view(request, pk):
 
 @login_required(login_url='users:login')
 def add_category_view(request):
-    categories = Category.objects.filter(family=request.user.family).order_by('parent')
+    categories = Category.objects.filter(family=request.user.family_object).order_by('parent')
+    if not categories:
+        if request.user.family_object:
+            messages.error(request, 'Вы пока что не добавили ни одну категорию')
+        else:
+            messages.error(request, 'Вы не состоите в семье')
+
+
     form = CategoryForm()
     if request.method == 'POST':
         form = CategoryForm(request.POST)

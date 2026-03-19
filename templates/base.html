@@ -11,19 +11,37 @@
 
 <body>
 <header class="navbar">
-    <a href="{% url 'base:home' %}" class="navbar-title">Finance Tracker</a>
+
+    <a href="{% url 'base:table' url_year url_month %}" class="navbar-title">
+        Finance Tracker
+    </a>
 
     <div class="navbar-center">
-        <a href="{% url 'users:logout' %}" class="navbar-link">Пользователь: {{ user.name }}</a>
         {% if user.family_object %}
-        <a href="{% url 'family:profile_family' %}" class="navbar-link">Семья: {{ user.family_object.name }}</a>
+        <a href="{% url 'family:profile_family' %}" class="navbar-link">
+            Семья: {{ user.family_object.name }}
+        </a>
         {% else %}
         <a href="{% url 'family:create_family' %}" class="navbar-link">Создать семью</a>
-
+        <a href="{% url 'family:enter_invite' %}" class="navbar-link">Войти по коду</a>
         {% endif %}
     </div>
 
-    <a href="{% url 'base:add_category' %}" class="btn btn-outline">Добавить категорию</a>
+    <div class="navbar-right">
+        {% if user.is_authenticated %}
+        <a href="{% url 'users:logout' %}" class="btn btn-outline" style="background: {{ user.color }}; color: {{ user_text_color }};">
+            {{ user.name }}
+        </a>
+        {% else %}
+        <a href="{% url 'users:login' %}" class="btn btn-outline">Войти</a>
+        {% endif %}
+
+        <a href="{% url 'base:add_category' %}" class="btn btn-outline">
+            Добавить категорию
+        </a>
+
+    </div>
+
 </header>
 
 {% block content %}

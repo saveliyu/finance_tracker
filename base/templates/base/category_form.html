@@ -1,66 +1,25 @@
-{% extends 'base.html' %}
+{% extends 'forms.html' %}
 
-{% block content %}
+{% block form_title %} Новая категория {% endblock %}
 
-<main>
+{% block submit_button %} Сохранить {% endblock %}
 
-    <div class="card">
-
-        <div class="page-header">
-            <div class="page-title">Новая категория</div>
-            <a href="javascript:history.back()"><button type="submit" class="btn">← Назад</button></a>
-        </div>
-
-        <form class="form" method="POST">
-            {% csrf_token %}
-            {% if post_form.non_field_errors %}
-                <div class="form-error">
-                    {{ post_form.non_field_errors }}
-                </div>
-            {% endif %}
-            {% for f in form %}
-
-            <div class="category-form-row">
-                <label class="label">{{ f.label }}</label>
-                {{ f }}
-            </div>
-            {% if f.errors %}
-                        <div class="form-error">
-                            {{ f.errors }}
-                        </div>
-                {% endif %}
-            {% endfor %}
-
-            <button type="submit" class="btn">Сохранить</button>
-
-        </form>
-
-        <div class="category-list">
-
-            <div class="category-title">Текущие категории</div>
-
-            <div class="category-pills">
-                {% for cat in categories %}
-                <div class="category-pill" style="background: {{ cat.color }}99;">
-                    <span style="color: {{ cat.color }}; filter: brightness(0.5);">
-                        {% if cat.parent %}
-                            {{ cat.name }}
-                            <b>
-                        {% else %}
-                            <b>
-                            {{ cat.name }}
-                        {% endif %}
-                            <a href="{% url 'base:delete_category' cat.pk %}">х</a>
-                        </b>
-                    </span>
-                </div>
-                {% endfor %}
-
-            </div>
-
-        </div>
-
+{% block form_footer %}
+<div class="category-pills">
+    {% for cat in categories %}
+    <div class="category-pill" style="background: {{ cat.color }}99;">
+        <span style="color: {{ cat.color }}; filter: brightness(0.5);">
+            {% if cat.parent %}
+            {{ cat.name }}
+            <b>
+                {% else %}
+                <b>
+                    {{ cat.name }}
+                    {% endif %}
+                    <a href="{% url 'base:delete_category' cat.pk %}">х</a>
+                </b>
+        </span>
     </div>
-
-</main>
+    {% endfor %}
+</div>
 {% endblock %}

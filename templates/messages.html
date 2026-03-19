@@ -1,0 +1,15 @@
+<div class="messages" id="messages">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="toast-modal
+            {% if 'success' in message.tags %} toast-success {% endif %}
+            {% if 'error' in message.tags %} toast-error {% endif %}">
+        <span class="toast-icon">
+            {% if 'success' in message.tags %}✔{% endif %}
+            {% if 'error' in message.tags %}✖{% endif %}
+        </span>
+        <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
