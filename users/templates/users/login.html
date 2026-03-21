@@ -4,3 +4,6 @@
 
 {% block submit_button %} Войти {% endblock %}
 
+{% block extra_buttons %}
+    <a href="{% url 'users:register' %}" class="btn">Создать аккаунт</a>
+{% endblock %}

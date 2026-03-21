@@ -5,7 +5,7 @@ from base.models import Category, Purchase
 
 
 def get_parrent_category_dashboard_data(purchases, categories) -> dict:
-    category_data = purchases.values('category__parent__id', 'category__parent__name').annotate(total=Sum('price'))
+    category_data = purchases.filter(category__parent__isnull=False).values('category__parent__id', 'category__parent__name').annotate(total=Sum('price'))
     category_labels = []
     category_totals = []
     category_colors = []
@@ -21,19 +21,29 @@ def get_parrent_category_dashboard_data(purchases, categories) -> dict:
 
 def get_category_dashboard_data(purchases, categories) -> dict:
     category_data = purchases.values('category__id', 'category__name').annotate(total=Sum('price'))
+
+    categories_dict = {c.id: c for c in categories}
+
     category_labels = []
     category_totals = []
     category_colors = []
 
     for c in category_data:
+        cat_id = c['category__id']
+
+        category_obj = categories_dict.get(cat_id)
+        if not category_obj:
+            continue  # 💥 ВОТ ЭТО СПАСАЕТ ОТ КРАША
+
         category_labels.append(c['category__name'])
         category_totals.append(float(c['total']))
-        category_obj = categories.get(id=c['category__id'])
-        print(f'obj: {category_obj}, c: {c}')
         category_colors.append(category_obj.color)
-    return {'category_labels': category_labels,
+
+    return {
+        'category_labels': category_labels,
         'category_totals': category_totals,
-        'category_colors': category_colors,}
+        'category_colors': category_colors,
+    }
 
 def get_person_dashboard_data(purchases, users) -> dict:
     person_data = purchases.values('user__id', 'user__username').annotate(total=Sum('price'))

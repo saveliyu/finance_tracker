@@ -1,8 +1,20 @@
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login
 from django.contrib.auth.views import LoginView
+from django.views.generic import CreateView, DetailView
 
-from .forms import CustomUserLoginForm
+from .forms import CustomUserLoginForm, CustomUserRegisterForm
 from django.shortcuts import redirect
+
+from .models import CustomUser
+
+from users.utils import *
+
+from base.models import Purchase
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('/')
 
 
 class CustomUserLoginView(LoginView):
@@ -10,6 +22,47 @@ class CustomUserLoginView(LoginView):
     template_name = 'users/login.html'
     success_url = '/'
 
-def logout_view(request):
-    logout(request)
-    return redirect('/')
+
+class CustomUserRegisterView(CreateView):
+    form_class = CustomUserRegisterForm
+    template_name = 'users/register.html'
+    success_url = '/'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        login(self.request, self.object)
+        return response
+
+
+class ProfileView(DetailView):
+    model = CustomUser
+    template_name = 'users/profile.html'
+    context_object_name = 'profile'
+
+    def get_object(self):
+        return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_purchases = Purchase.objects.filter(user=self.request.user)
+        profile_data = get_profile_stats(user_purchases)
+        streak = get_streak(user_purchases)
+        activity = get_activity_days(user_purchases)
+        top_category, top_category_proportion = get_top_category(user_purchases)
+        context = {
+            'profile_data': profile_data,
+
+            # Стрик
+            "streak": streak,
+
+            # Тепловая карта
+            "activity_days": list(activity.keys())[::-1],
+            "activity_values": list(activity.values())[::-1],
+
+            # Топ категория
+            "top_category": top_category,
+            "top_category_proportion": top_category_proportion,
+
+
+        }
+        return context

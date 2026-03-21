@@ -1590,7 +1590,7 @@ tbody tr:hover {
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
     padding: 0.75rem 1rem;
-
+    z-index: 999;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
@@ -1606,4 +1606,69 @@ tbody tr:hover {
 
 .navbar-right {
     justify-self: end;
+}
+
+/* FORM ERROR */
+.form-error {
+    background: #fee2e2;              /* мягкий красный фон */
+    color: #b91c1c;                   /* насыщенный красный текст */
+    border: 1px solid #fecaca;        /* светлая красная рамка */
+    padding: 0.6rem 0.9rem;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    margin-top: -4px;                 /* чуть ближе к полю */
+    margin-bottom: 0.5rem;
+    animation: fadeIn 0.25s ease;
+}
+
+/* Анимация появления */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.profile-login {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+.profile-form-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1rem;
+    margin-top: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    width: 100%;
+}
+
+.profile-form-card .page-title {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.profile-form-card .form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.profile-form-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1rem;
+    margin-top: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    width: 100%;
+}
+
+.profile-form-card .page-title {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
 }

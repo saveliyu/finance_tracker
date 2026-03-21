@@ -29,13 +29,17 @@
             </div>
             {% if f.errors %}
             <div class="form-error">
-                {{ f.errors }}
+                {{ f.errors.0 }}
             </div>
             {% endif %}
             {% endfor %}
 
             {% block form_info %} {% endblock %}
-            <button type="submit" class="btn">{% block submit_button %} {% endblock %}</button>
+            <div class="family-actions">
+                <button type="submit" class="btn">{% block submit_button %} {% endblock %}</button>
+                {% block extra_buttons %} {% endblock %}
+            </div>
+
 
         </form>
         {% block form_footer %}

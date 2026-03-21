@@ -4,7 +4,6 @@ def user_text_color(request):
     if not request.user.is_authenticated:
         return {}
     hex_color = str(request.user.color).strip('#')
-    print(hex_color)
     r = int(hex_color[0:2], 16)
     g = int(hex_color[2:4], 16)
     b = int(hex_color[4:6], 16)
@@ -29,5 +28,4 @@ def table_url(request):
         'url_month': month,
         'url_year': year
     }
-    print('table', context)
     return context

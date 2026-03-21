@@ -1,5 +1,5 @@
 from django import forms
-from .models import FamilyInvite, FamilyMember
+from .models import FamilyInvite, Family
 
 
 class InviteForm(forms.Form):
@@ -10,6 +10,6 @@ class FamilyForm(forms.ModelForm):
     name = forms.CharField(label='Как назовем семью?', widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': ' Учиха клан', 'autofocus': True}))
 
     class Meta:
-        model = FamilyMember
+        model = Family
         exclude = ['user']
         fields = ('name',)

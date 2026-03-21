@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from family.models import FamilyInvite
-from family.utils import *
+from users.utils import *
 from family.forms import InviteForm, FamilyForm
 
 from base.models import *
@@ -33,7 +33,7 @@ def profile_family_view(request):
 
     users = CustomUser.objects.filter(
         family_member__family=family_member.family
-    )
+    ).order_by('-family_member__status')
 
     all_purchases = Purchase.objects.filter(user__in=users)
     members = dict()
@@ -53,11 +53,21 @@ def profile_family_view(request):
 
     return render(request, 'family/family.html', context)
 
-
+@login_required(login_url='users:login')
 def create_family_view(request):
-    form = FamilyForm
+    form = FamilyForm()
+
+    if request.method == 'POST':
+        form = FamilyForm(request.POST)
+        if form.is_valid():
+            family = form.save(commit=False)
+            family.name = form.cleaned_data['name']
+            family.save()
+            FamilyMember.objects.create(user=request.user, family=family)
+            return redirect('family:profile_family')
 
     context = {'form': form}
+
     return render(request, 'family/create_family.html', context)
 
 
@@ -134,10 +144,19 @@ def delete_member(request, pk):
     else:
         messages.success(request, f'Такого пользователя не существует')
         return redirect('family:profile_family')
+    family_object = member.family_object
 
     user = request.user
     if member == user:
-        member.family_member.delete()
+        family_member.delete()
+        if family_object.members.count() == 1:
+            family_object.delete()
+        else:
+            if member.family_member.status == FamilyMember.Status.CREATOR:
+                new_creator = member.family_object.members.all().order_by('-status', 'created_at').first()
+                new_creator.status = FamilyMember.Status.CREATOR
+                new_creator.save()
+
         messages.success(request, f'Вы успешно вышли из семьи')
     elif not member.family_object:
         messages.error(request, 'Данный пользователь на данный момент не состоит в семье')
@@ -148,6 +167,8 @@ def delete_member(request, pk):
     elif member.family_member.status == 1:
         messages.error(request, 'Вы не можете удалить создателя семьи')
     else:
+        if member.family_object.members.count() == 1:
+            member.family_object.delete()
         member.family_member.delete()
         messages.success(request, f'Пользователь {member} удален')
 

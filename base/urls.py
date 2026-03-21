@@ -14,3 +14,7 @@ urlpatterns = [
 ]
 
 
+    # pname = choice(purchase_names)
+    # puser = choice(dashosavo.members.all()).user
+    # pcat = choice(catsd.all())
+    # Purchase.objects.create(name=pname, user=puser, category=pcat, price=randint(30, 1500), date=date(2026, 3, randint(1, 30)), family=dashosavo)

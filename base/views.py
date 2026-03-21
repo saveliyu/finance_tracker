@@ -26,14 +26,14 @@ class IndexView(TemplateView):
             'month': month,
             'year': year
         }
-        print(context)
         return context
 
 
 @login_required(login_url='users:login')
 def table_view(request, year=None, month=None):
-    categories = Category.objects.all().order_by('-parent')
     family_members = request.user.family_members.select_related('user')
+    categories = Category.objects.filter(family=request.user.family_object).order_by('-parent')
+
     users_pk = list()
     for user in family_members:
         users_pk.append(user.user.pk)
@@ -55,7 +55,8 @@ def table_view(request, year=None, month=None):
                 purchases = purchases.filter(category__parent=category)
             else:
                 purchases = purchases.filter(category=category)
-
+    for c in categories:
+        print(c.family)
     if request.GET.get('parents'):
         dashboard_data = get_data_for_dashboard(clean_purchases, purchases, categories, users, parents=True)
     else:
@@ -74,7 +75,6 @@ def table_view(request, year=None, month=None):
         'users': users,
         'purchases': purchases,
 
-        'month': trans_month,
         'year': year,
         'arrows_url': arrows_url,
 

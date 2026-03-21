@@ -36,8 +36,9 @@ class Family(models.Model):
 class FamilyMember(models.Model):
     class Status(models.IntegerChoices):
         MEMBER = 0, 'Участник'
-        CREATOR = 1, 'Создатель'
-        ADMINISTRATOR = 2, 'Админ'
+        ADMINISTRATOR = 1, 'Админ'
+        CREATOR = 2, 'Создатель'
+
 
 
     family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name='members')

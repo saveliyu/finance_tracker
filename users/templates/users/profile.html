@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main>
+    <section id="profilePage">
+
+        <!-- ШАПКА ПРОФИЛЯ НА ВСЮ ШИРИНУ -->
+        <div class="profile-card" style="margin-bottom: 1.5rem;">
+
+            <div class="profile-color-cloud" style="--cat-color: #4ade80;">
+                <div class="profile-name">{{ user.name|title }}</div>
+                <div class="profile-role">{{ user.family_member.get_status_display }}</div>
+                <div class="profile-login" style="margin-top:6px; font-size:0.85rem; color:var(--muted);">
+                    Логин: {{ user.username }}
+                </div>
+            </div>
+
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Всего потратил</div>
+                    <div class="stat-value">{{ profile_data.user_sum }} ₽</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-label">В этом месяце</div>
+                    <div class="stat-value">{{ profile_data.user_month_sum }} ₽</div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-label">Категорий в этом месяце</div>
+                    <div class="stat-value">{{ profile_data.user_month_cats }}</div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ДВЕ КОЛОНКИ -->
+        <div class="layout">
+
+            <!-- ЛЕВАЯ КОЛОНКА — ФОРМА -->
+            <div class="main-column">
+
+                <div class="profile-form-card">
+
+                    <div class="page-title">Редактировать профиль</div>
+
+                    <form class="form">
+
+                        <div>
+                            <label class="label">Новое имя</label>
+                            <input type="text" class="form-control" placeholder="Введите новое имя">
+                        </div>
+
+                        <div>
+                            <label class="label">Цвет профиля</label>
+                            <input type="color" class="color-input" value="#4ade80">
+                        </div>
+
+                        <button type="submit" class="btn" style="margin-top:0.5rem;">
+                            Сохранить изменения
+                        </button>
+
+                    </form>
+                </div>
+
+                <a href="{% url 'users:logout' %}" class="btn add-member-btn"
+                   style="margin-top:1rem; background:#ff2b5d;">
+                    Выйти из аккаунта
+                </a>
+
+            </div>
+
+
+            <!-- ПРАВАЯ КОЛОНКА — УНИКАЛЬНЫЙ ДАШБОРД -->
+            <aside class="dashboard">
+
+                <div class="dashboard-header">
+                    <div class="dashboard-title">Дашборд профиля</div>
+
+                    <!-- СТРИК -->
+                    <div style="font-size:1.4rem; display:flex; align-items:center; gap:4px;">
+                        🔥 <span style="font-size:0.9rem; color:var(--muted);">{{ streak }}</span>
+                    </div>
+                </div>
+
+
+                <!-- ГРАФИК АКТИВНОСТИ (ТЕПЛОВАЯ КАРТА) -->
+                <div class="chart-block">
+                    <div class="chart-label">Активность по дням</div>
+                    <canvas id="heatmapChart" height="160"></canvas>
+                </div>
+
+
+                <!-- ТОП КАТЕГОРИИ -->
+                <div class="chart-block">
+                    <div class="chart-label">Топ категория по количеству операций</div>
+
+                    <div class="stat-item" style="background: {{ top_category.color }}">
+                        <div class="stat-label">{{ top_category.name }}</div>
+                        <div class="stat-value">{{ top_category_proportion }}%</div>
+                    </div>
+                </div>
+
+            </aside>
+
+        </div>
+
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const heatmapCtx = document.getElementById('heatmapChart').getContext('2d');
+
+const days = {{ activity_days|safe }};
+const values = {{ activity_values|safe }};
+
+// Находим максимум
+const maxValue = Math.max(...values);
+
+// Функция генерации цвета по значению
+function getColor(v) {
+    const ratio = v / maxValue;
+
+    if (ratio > 0.75) return '#1d4ed8';      // насыщенный синий
+    if (ratio > 0.5)  return '#3b82f6';      // средний синий
+    if (ratio > 0.25) return '#93c5fd';      // светлый синий
+    return '#e5e7eb';                        // серый
+}
+
+new Chart(heatmapCtx, {
+    type: 'bar',
+    data: {
+        labels: days,
+        datasets: [{
+            data: values,
+            backgroundColor: values.map(v => getColor(v)),
+            borderRadius: 4
+        }]
+    },
+    options: {
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+    displayColors: false,
+    callbacks: {
+    title: (ctx) => ctx[0].label,
+    label: (ctx) => `${ctx.raw} ₽`
+}
+}
+        },
+        scales: {
+            x: {
+                display: false,
+                ticks: {
+                    color: '#6b7280',
+                    font: { size: 10 },
+                    maxRotation: 90,
+                    minRotation: 90,
+                    autoSkip: false
+                },
+                grid: { display: false }
+            },
+            y: {
+                display: true,
+                ticks: {
+                    display: false   // ← убираем подписи по оси Y
+                },
+                grid: {
+                    color: '#e5e7eb' // ← оставляем сетку
+                }
+            }
+        }
+    }
+});
+
+    </script>
+</main>
+
+
+<!-- ===================== JS ГРАФИКОВ ===================== -->
+
+
+{% endblock %}

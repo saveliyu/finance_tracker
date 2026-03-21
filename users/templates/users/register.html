@@ -1,0 +1,9 @@
+{% extends 'forms.html' %}
+
+{% block form_title %} Регистрация аккаунта {% endblock %}
+
+{% block submit_button %} Создать {% endblock %}
+
+{% block extra_buttons %}
+    <a href="{% url 'users:login' %}" class="btn">Войти в существующий аккаунт</a>
+{% endblock %}
