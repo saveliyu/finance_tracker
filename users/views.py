@@ -1,5 +1,7 @@
 from django.contrib.auth import logout, login
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.decorators import login_required
+
 from django.views.generic import CreateView, DetailView
 
 from .forms import CustomUserLoginForm, CustomUserRegisterForm, UserUpdateForm
@@ -12,10 +14,11 @@ from users.utils import *
 from base.models import Purchase
 
 
-def logout_view(request):
+def user_logout(request):
     logout(request)
     return redirect('/')
 
+@login_required(login_url='users:login')
 def change_data(request):
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, instance=request.user)
