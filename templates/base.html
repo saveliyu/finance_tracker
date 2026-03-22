@@ -17,9 +17,9 @@
     </a>
 
     <div class="navbar-center">
-        {% if user.family_object %}
+        {% if user.get_family_object %}
         <a href="{% url 'family:profile_family' %}" class="navbar-link">
-            Семья: {{ user.family_object.name }}
+            Семья: {{ user.get_family_object.name }}
         </a>
         {% else %}
         <a href="{% url 'family:create_family' %}" class="navbar-link">Создать семью</a>

@@ -6,7 +6,7 @@ from family.models import *
 
 class BaseViewTest(TestCase):
     def setUp(self):
-        self.user = CustomUser.objects.create_user(username='test', password='1234', name='test')
+        self.user = CustomUser.objects.create_user(username='test', password='1234', name='test', color='#7542f5')
 
         self.client = Client()
         self.client.login(username='test', password='1234')

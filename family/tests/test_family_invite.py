@@ -131,7 +131,7 @@ class InviteViewTest(BaseViewTest):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'family/enter_invite.html')
         form = response.context['form']
-        self.assertFormError(form, 'code', 'This field is required.')
+        self.assertFormError(form, 'code', 'Обязательное поле.')
 
     def test_enter_invite_without_login(self):
         self.client.logout()
