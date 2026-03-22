@@ -1,11 +1,9 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.conf import settings
-
-from slugify import slugify
 
 from family.models import FamilyMember
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class CustomUserManager(BaseUserManager):
@@ -31,23 +29,20 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     @property
-    def family_object(self):
-        try:
-            member = self.family_member
-        except:
-            return None
+    def get_family_object(self):
+        member = self.get_family_member
         return member.family if member else None
 
     @property
     def get_family_member(self):
         try:
             return self.family_member
-        except:
+        except ObjectDoesNotExist:
             return None
 
     @property
-    def family_members(self):
-        family = self.family_object
+    def get_family_members(self):
+        family = self.get_family_object
         return family.members.all() if family else FamilyMember.objects.none()
 
     def __str__(self):

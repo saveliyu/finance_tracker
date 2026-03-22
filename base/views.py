@@ -31,8 +31,8 @@ class IndexView(TemplateView):
 
 @login_required(login_url='users:login')
 def table_view(request, year=None, month=None):
-    family_members = request.user.family_members.select_related('user')
-    categories = Category.objects.filter(family=request.user.family_object).order_by('-parent')
+    family_members = request.user.get_family_members.select_related('user')
+    categories = Category.objects.filter(family=request.user.get_family_object).order_by('-parent')
 
     users_pk = list()
     for user in family_members:
@@ -93,7 +93,7 @@ def add_purchase_view(request):
         if form.cleaned_data['user'] != request.user:
             return redirect(request.META.get('HTTP_REFERER', '/'))
         purchase = form.save(commit=False)
-        purchase.family = request.user.family_object
+        purchase.family = request.user.get_family_object
         purchase.save()
         return redirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -107,9 +107,9 @@ def delete_purchase_view(request, pk):
 
 @login_required(login_url='users:login')
 def add_category_view(request):
-    categories = Category.objects.filter(family=request.user.family_object).order_by('parent')
+    categories = Category.objects.filter(family=request.user.get_family_object).order_by('parent')
     if not categories:
-        if request.user.family_object:
+        if request.user.get_family_object:
             messages.error(request, 'Вы пока что не добавили ни одну категорию')
         else:
             messages.error(request, 'Вы не состоите в семье')
@@ -120,7 +120,7 @@ def add_category_view(request):
         form = CategoryForm(request.POST)
         if form.is_valid():
             category = form.save(commit=False)
-            category.family = request.user.family_object
+            category.family = request.user.get_family_object
             category.parent = form.cleaned_data['parent']
             category.save()
             return redirect(request.META.get('HTTP_REFERER', '/'))

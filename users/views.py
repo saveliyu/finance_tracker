@@ -2,7 +2,7 @@ from django.contrib.auth import logout, login
 from django.contrib.auth.views import LoginView
 from django.views.generic import CreateView, DetailView
 
-from .forms import CustomUserLoginForm, CustomUserRegisterForm
+from .forms import CustomUserLoginForm, CustomUserRegisterForm, UserUpdateForm
 from django.shortcuts import redirect
 
 from .models import CustomUser
@@ -15,6 +15,13 @@ from base.models import Purchase
 def logout_view(request):
     logout(request)
     return redirect('/')
+
+def change_data(request):
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+    return redirect('users:profile')
 
 
 class CustomUserLoginView(LoginView):
@@ -43,7 +50,6 @@ class ProfileView(DetailView):
         return self.request.user
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
         user_purchases = Purchase.objects.filter(user=self.request.user)
         profile_data = get_profile_stats(user_purchases)
         streak = get_streak(user_purchases)
@@ -63,6 +69,6 @@ class ProfileView(DetailView):
             "top_category": top_category,
             "top_category_proportion": top_category_proportion,
 
-
+            "form": UserUpdateForm(instance=self.request.user),
         }
         return context

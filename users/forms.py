@@ -29,3 +29,13 @@ class CustomUserRegisterForm(UserCreationForm):
         if CustomUser.objects.filter(username=username).exists():
             raise forms.ValidationError('Пользователь с таким логином уже существует')
         return username
+
+class UserUpdateForm(forms.ModelForm):
+    name = forms.CharField(label='Имя', widget=forms.TextInput(attrs={'class': 'form-control input-right', }))
+
+    color = forms.CharField(label='Пользовательский цвет', initial='pink',
+                            widget=forms.TextInput(attrs={'type': 'color', 'class': 'color-input'}))
+
+    class Meta:
+        model = CustomUser
+        fields = ('name', 'color')

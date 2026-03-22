@@ -13,15 +13,15 @@ class FamilyMemberTest(TestCase):
         self.assertEqual(member.user, self.user)
         self.assertEqual(member.family, self.family)
 
-        self.assertEqual(self.user.family_member, member)
+        self.assertEqual(self.user.get_family_member, member)
 
     def test_user_has_family(self):
         FamilyMember.objects.create(family=self.family, user=self.user)
 
-        self.assertIsNotNone(self.user.family_object)
+        self.assertIsNotNone(self.user.get_family_object)
 
     def test_user_has_not_family(self):
-        self.assertIsNone(self.user.family_object)
+        self.assertIsNone(self.user.get_family_object)
 
     def test_second_family_creation(self):
         FamilyMember.objects.create(family=self.family, user=self.user)

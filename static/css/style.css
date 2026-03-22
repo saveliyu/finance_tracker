@@ -927,7 +927,7 @@ tbody tr:hover {
 }
 
 .stat-label {
-    color: var(--muted);
+    color: black;
 }
 
 .stat-value {
@@ -1671,4 +1671,9 @@ tbody tr:hover {
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 1rem;
+}
+
+.main-column,
+.dashboard {
+    margin-top: 0rem;
 }

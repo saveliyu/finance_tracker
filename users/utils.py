@@ -17,7 +17,7 @@ def get_profile_stats(purchase):
 
 
 def get_streak(purchases):
-    purchases = purchases.values('date').distinct().order_by('-date')
+    purchases = purchases.filter(date__lte=timezone.now().date()).values('date').distinct().order_by('-date')
     streak = 0
     prev_date = None
     for purchase in purchases:
@@ -73,6 +73,8 @@ def get_top_category(purchases):
         if max_counts < counts:
             max_counts = counts
             best_category = category['category']
+    if not best_category:
+        return None, None
     category = Category.objects.get(pk=best_category)
     total_count = purchases.count()
     if max_counts > 0:

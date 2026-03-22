@@ -16,7 +16,7 @@ def profile_family_view(request):
         member_status = request.POST.get('member_status')
         member_pk = request.POST.get('member_pk')
 
-        member = CustomUser.objects.get(pk=member_pk).family_member
+        member = CustomUser.objects.get(pk=member_pk).get_family_member
 
         member.status = int(member_status)
         member.save()
@@ -101,7 +101,7 @@ def enter_invite_view(request):
 
 @login_required(login_url='users:login')
 def create_invite(request):
-    family = request.user.family_object
+    family = request.user.get_family_object
 
     if family and not hasattr(request.user, 'invites'):
         invite = FamilyInvite(created_by=request.user, family=family)
@@ -144,7 +144,7 @@ def delete_member(request, pk):
     else:
         messages.success(request, f'Такого пользователя не существует')
         return redirect('family:profile_family')
-    family_object = member.family_object
+    family_object = member.get_family_object
 
     user = request.user
     if member == user:
@@ -152,24 +152,24 @@ def delete_member(request, pk):
         if family_object.members.count() == 1:
             family_object.delete()
         else:
-            if member.family_member.status == FamilyMember.Status.CREATOR:
-                new_creator = member.family_object.members.all().order_by('-status', 'created_at').first()
+            if member.get_family_member.status == FamilyMember.Status.CREATOR:
+                new_creator = member.get_family_object.members.all().order_by('-status', 'created_at').first()
                 new_creator.status = FamilyMember.Status.CREATOR
                 new_creator.save()
 
         messages.success(request, f'Вы успешно вышли из семьи')
-    elif not member.family_object:
+    elif not member.get_family_object:
         messages.error(request, 'Данный пользователь на данный момент не состоит в семье')
-    elif member.family_object != user.family_object:
+    elif member.get_family_object != user.get_family_object:
         messages.error(request, 'Вы не можете удалить члена другой семьи')
-    elif not user.family_member.status:
+    elif not user.get_family_member.status:
         messages.error(request, 'У вас не хватает прав для удаления')
-    elif member.family_member.status == 1:
+    elif member.get_family_member.status == 1:
         messages.error(request, 'Вы не можете удалить создателя семьи')
     else:
-        if member.family_object.members.count() == 1:
-            member.family_object.delete()
-        member.family_member.delete()
+        if member.get_family_object.members.count() == 1:
+            member.get_family_object.delete()
+        member.get_family_member.delete()
         messages.success(request, f'Пользователь {member} удален')
 
     return redirect('family:profile_family')

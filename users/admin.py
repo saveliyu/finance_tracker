@@ -10,7 +10,7 @@ class CustomUserAdmin(UserAdmin):
 
     # Метод для отображения семьи
     def family_object(self, obj):
-        return obj.family_object.name if obj.family_object else "-"
+        return obj.get_family_object.name if obj.get_family_object else "-"
     family_object.short_description = "Family"
 
     # Указываем, что метод readonly

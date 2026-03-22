@@ -41,25 +41,35 @@
             <!-- ЛЕВАЯ КОЛОНКА — ФОРМА -->
             <div class="main-column">
 
-                <div class="profile-form-card">
+                <div class="profile-form-card" style="margin-top: 0px;">
 
                     <div class="page-title">Редактировать профиль</div>
 
-                    <form class="form">
+                    <form class="form" method="POST" action="{% url 'users:change_data' %}">
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                        <div class="form-error">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
 
-                        <div>
-                            <label class="label">Новое имя</label>
-                            <input type="text" class="form-control" placeholder="Введите новое имя">
+                        {% for f in form %}
+                        <div class="category-form-row">
+                            <label class="label">{{ f.label }}</label>
+                            {{ f }}
                         </div>
 
-                        <div>
-                            <label class="label">Цвет профиля</label>
-                            <input type="color" class="color-input" value="#4ade80">
+                        {% if f.errors %}
+                        <div class="form-error">
+                            {{ f.errors.0 }}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+
+                        <div class="family-actions">
+                            <button type="submit" class="btn">Сохранить изменения</button>
                         </div>
 
-                        <button type="submit" class="btn" style="margin-top:0.5rem;">
-                            Сохранить изменения
-                        </button>
 
                     </form>
                 </div>
@@ -93,6 +103,7 @@
 
 
                 <!-- ТОП КАТЕГОРИИ -->
+                {% if top_category %}
                 <div class="chart-block">
                     <div class="chart-label">Топ категория по количеству операций</div>
 
@@ -101,6 +112,7 @@
                         <div class="stat-value">{{ top_category_proportion }}%</div>
                     </div>
                 </div>
+                {% endif %}
 
             </aside>
 
