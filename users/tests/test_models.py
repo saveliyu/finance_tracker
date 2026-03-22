@@ -44,3 +44,10 @@ class TestCustomUser(TestCase):
         FamilyMember.objects.create(user=self.user, family=self.family)
         self.assertEqual(self.user.get_family_object, self.family)
 
+class TestSuperUser(TestCase):
+    def setUp(self):
+        self.user = CustomUser.objects.create_superuser(username="testusername", name="testuser", color='#7542f5', password='1234')
+
+    def test_roots(self):
+        self.assertTrue(self.user.is_staff)
+        self.assertTrue(self.user.is_superuser)

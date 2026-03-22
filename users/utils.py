@@ -9,7 +9,7 @@ from base.models import Category
 
 def get_profile_stats(purchase):
     user_sum = purchase.aggregate(Sum('price'))['price__sum'] or 0
-    user_month = purchase.filter(date__month=timezone.now().month)
+    user_month = purchase.filter(date__month=timezone.now().month, date__year=timezone.now().year)
     user_month_sum = user_month.aggregate(Sum('price'))['price__sum'] or 0
     user_month_cats = user_month.values('category').distinct().count()
 
@@ -22,7 +22,10 @@ def get_streak(purchases):
     prev_date = None
     for purchase in purchases:
         if streak == 0:
-            streak = 1
+            if purchase['date'] + timedelta(days=1) < timezone.now().date():
+                break
+            else:
+                streak = 1
         else:
             if purchase['date'] != prev_date:
                 if (prev_date - purchase['date']) == timedelta(days=1):
@@ -33,7 +36,9 @@ def get_streak(purchases):
     return streak
 
 
-def _get_day_moth(date):
+def _get_day_month(date):
+    if not date:
+        return None
     if len(str(date.day)) == 1:
         day = f'0{date.day}'
     else:
@@ -51,25 +56,24 @@ def get_activity_days(purchases):
     purchases = purchases.filter(date__lte=today, date__gte=end_date).order_by('-date')
     activity = dict()
     for i in range(30):
-        activity[_get_day_moth(today - timedelta(days=i))] = 0
-
+        activity[_get_day_month(today - timedelta(days=i))] = 0
     for purchase in purchases:
-        date = _get_day_moth(purchase.date)
-        price = float(purchase.price)
-        activity[date] = price
+        date = _get_day_month(purchase.date)
+        if date in activity:
+            price = float(purchase.price)
+            activity[date] += price
 
     return activity
 
 
 def get_top_category(purchases):
-    purchases = purchases.filter(date__month=timezone.now().month)
+    purchases = purchases.filter(date__month=timezone.now().month, date__year=timezone.now().year)
     categories = purchases.values('category').distinct().order_by('category')
 
     best_category = None
     max_counts = 0
     for category in categories:
         counts = purchases.filter(category__pk=category['category']).count()
-
         if max_counts < counts:
             max_counts = counts
             best_category = category['category']
@@ -78,7 +82,7 @@ def get_top_category(purchases):
     category = Category.objects.get(pk=best_category)
     total_count = purchases.count()
     if max_counts > 0:
-        proportion = round(total_count / max_counts)
+        proportion = round(max_counts / total_count * 100)
     else:
         proportion = 0
     return category, proportion
