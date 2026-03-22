@@ -82,7 +82,7 @@ def get_top_category(purchases):
     category = Category.objects.get(pk=best_category)
     total_count = purchases.count()
     if max_counts > 0:
-        proportion = round(max_counts / total_count * 100)
+        proportion = round((max_counts / total_count) * 100)
     else:
         proportion = 0
     return category, proportion

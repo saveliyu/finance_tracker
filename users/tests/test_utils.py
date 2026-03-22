@@ -150,6 +150,14 @@ class ProfileStreakTestCase(TestCase):
         purchases = Purchase.objects.all()
         self.assertEqual(get_streak(purchases), 1)
 
+    def test_streak_with_couple_purchases_in_one_day(self):
+        Purchase.objects.create(name='1', user=self.user, family=self.family, date=timezone.now().date(),
+                                price=100, category=self.category)
+        Purchase.objects.create(name='2', user=self.user, family=self.family, date=timezone.now().date(),
+                                price=100, category=self.category)
+        purchases = Purchase.objects.all()
+        self.assertEqual(get_streak(purchases), 1)
+
 
 class DayDotMonthConverterTestCase(TestCase):
 
@@ -276,28 +284,6 @@ class ActivityDaysTestCase(TestCase):
         result = get_activity_days(purchases)
         self.assertEqual(result[_get_day_month(today)], 300)
 
-
-# def get_top_category(purchases):
-#     purchases = purchases.filter(date__month=timezone.now().month)
-#     categories = purchases.values('category').distinct().order_by('category')
-#
-#     best_category = None
-#     max_counts = 0
-#     for category in categories:
-#         counts = purchases.filter(category__pk=category['category']).count()
-#
-#         if max_counts < counts:
-#             max_counts = counts
-#             best_category = category['category']
-#     if not best_category:
-#         return None, None
-#     category = Category.objects.get(pk=best_category)
-#     total_count = purchases.count()
-#     if max_counts > 0:
-#         proportion = round(total_count / max_counts)
-#     else:
-#         proportion = 0
-#     return category, proportion
 
 class TopCategoryTestCase(TestCase):
     def setUp(self):
