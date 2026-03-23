@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 from base.forms import PurchaseForm, CategoryForm
 from base.models import Category, Purchase
@@ -69,11 +70,15 @@ def table_view(request, year=None, month=None):
     arrows_url = get_arrows_url(year, month)
 
     form = PurchaseForm(initial={'user': request.user}, user=request.user)
+    paginator = Paginator(purchases, 30)
+    page = request.GET.get('page')
+    paginated_purchases = paginator.get_page(page)
 
     context = {
         'categories': categories,
         'users': users,
-        'purchases': purchases,
+        'purchases': paginated_purchases,
+        'page_obj': paginated_purchases,
 
         'year': year,
         'arrows_url': arrows_url,

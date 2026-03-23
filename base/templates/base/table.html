@@ -15,6 +15,8 @@
                             <form method="GET">
                                 <input type="hidden" name="user_filter" value="{{ request.GET.user_filter }}">
                                 <input type="hidden" name="parents" value="{{ request.GET.parents }}">
+                                <input type="hidden" name="page" value="{{ request.GET.page }}">
+
 
                                 <select name="category_filter" id="categoryFilter" onchange="this.form.submit()">
                                     <option value="all">Все категории</option>
@@ -33,6 +35,7 @@
                             <form method="GET">
                                 <input type="hidden" name="category_filter" value="{{ request.GET.category_filter }}">
                                 <input type="hidden" name="parents" value="{{ request.GET.parents }}">
+                                <input type="hidden" name="page" value="{{ request.GET.page }}">
 
                                 <select name="user_filter" id="personFilter" onchange="this.form.submit()">
                                     <option value="all">Все</option>
@@ -108,9 +111,9 @@
                             {% for pur in purchases %}
                             {% ifchanged pur.date.day %}
                             <tr {% if not forloop.first %} style="border-top: 1.5px solid gray" {% endif %}>
-                            {% else %}
+                                {% else %}
                             <tr>
-                            {% endifchanged %}
+                                {% endifchanged %}
                                 <td class="category-cloud" style="--cat-color: {{ pur.category.color }};">
                                     {{ pur.category.name }}
                                 </td>
@@ -132,23 +135,51 @@
                     <div class="empty-state">Пока нет трат за этот месяц.</div>
                     {% endif %}
                 </div>
+                <!-- Пагинация -->
+                <div class="pagination">
+                    <form class="pagination" method="GET">
+                        <input type="hidden" name="user_filter" value="{{ request.GET.user_filter }}">
+                        <input type="hidden" name="parents" value="{{ request.GET.parents }}">
+                        <input type="hidden" name="category_filter" value="{{ request.GET.category_filter }}">
+                        {% if page_obj.has_previous %}
+                        <button type="submit" class="page-btn page-btn-small" name="page" value="1">&laquo;</button>
+                        <button type="submit" class="page-btn" name="page" value="{{ page_obj.previous_page_number }}">&lsaquo;</button>
+                        {% else %}
+                        <button disabled class="page-btn-disabled page-btn-small">&laquo;</button>
+                        <button disabled class="page-btn-disabled">&lsaquo;</button>
+                        {% endif %}
+
+                        <span class="page-number">{{ page_obj.number }}</span>
+
+                        {% if page_obj.has_next %}
+                        <button type="submit" class="page-btn" name="page" value="{{ page_obj.next_page_number }}">&rsaquo;</button>
+                        <button type="submit" class="page-btn page-btn-small" name="page" value="{{ page_obj.paginator.num_pages }}">&raquo;</button>
+                        {% else %}
+                        <button disabled class="page-btn-disabled">&rsaquo;</button>
+                        <button disabled class="page-btn-disabled page-btn-small">&raquo;</button>
+                        {% endif %}
+                    </form>
+                </div>
+
             </div>
 
             <!-- Дашборд -->
             <aside class="dashboard">
                 <div class="dashboard-header">
-                <div class="dashboard-title">Дашборд</div>
-                <div class="dashborad-toggle">
-                <form method="GET">
-                    <input type="hidden" name="category_filter" value="{{ request.GET.category_filter }}">
-                    <input type="hidden" name="user_filter" value="{{ request.GET.user_filter }}">
+                    <div class="dashboard-title">Дашборд</div>
+                    <div class="dashborad-toggle">
+                        <form method="GET">
+                            <input type="hidden" name="category_filter" value="{{ request.GET.category_filter }}">
+                            <input type="hidden" name="user_filter" value="{{ request.GET.user_filter }}">
+                            <input type="hidden" name="page" value="{{ request.GET.page }}">
 
-                    <label class="toggle">
-                        <input type="checkbox" onchange="this.form.submit()" name="parents" {% if request.GET.parents == 'on' %} checked {% endif %}>
-                        <span class="slider"></span>
-                    </label>
-                </form>
-                </div>
+                            <label class="toggle">
+                                <input type="checkbox" onchange="this.form.submit()" name="parents"
+                                       {% if request.GET.parents == 'on' %} checked {% endif %}>
+                                <span class="slider"></span>
+                            </label>
+                        </form>
+                    </div>
                 </div>
                 <div class="chart-block">
                     <div class="chart-label">Распределение по категориям</div>
@@ -166,90 +197,90 @@
                 </div>
             </aside>
             <!-- Подключаем плагин перед созданием графиков -->
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
-<script>
-const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-const personCtx = document.getElementById('personChart').getContext('2d');
+            <script>
+                const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+                const personCtx = document.getElementById('personChart').getContext('2d');
 
-// PIE / DOUGHNUT - категории с процентами
-const categoryChart = new Chart(categoryCtx, {
-    type: 'pie',
-    data: {
-        labels: {{ category_labels|safe }},
-        datasets: [{
-            data: {{ category_totals|safe }},
-            backgroundColor: {{ category_colors|safe }}
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: { position: 'bottom' },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return context.label + ': ₽' + context.raw.toFixed(2);
-                    }
-                }
-            },
-            datalabels: {
-                color: '#111827', // цвет текста
-                formatter: (value, context) => {
-                    const total = context.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);
-                    const percent = (value / total * 100).toFixed(1);
-                    return percent + '%';
-                },
-                font: { weight: '500', size: 12 }
-            }
-        }
-    },
-    plugins: [ChartDataLabels]
-});
+                // PIE / DOUGHNUT - категории с процентами
+                const categoryChart = new Chart(categoryCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: {{ category_labels|safe }},
+                        datasets: [{
+                            data: {{ category_totals|safe }},
+                            backgroundColor: {{ category_colors|safe }}
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'bottom' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.label + ': ₽' + context.raw.toFixed(2);
+                                    }
+                                }
+                            },
+                            datalabels: {
+                                color: '#111827', // цвет текста
+                                formatter: (value, context) => {
+                                    const total = context.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);
+                                    const percent = (value / total * 100).toFixed(1);
+                                    return percent + '%';
+                                },
+                                font: { weight: '500', size: 12 }
+                            }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                });
 
-// BAR - расходы по пользователям с суммой над столбцами
-const personChart = new Chart(personCtx, {
-    type: 'bar',
-    data: {
-        labels: {{ person_labels|safe }},
-        datasets: [{
-            label: 'Потрачено',
-            data: {{ person_totals|safe }},
-            backgroundColor: {{ person_colors|safe }},
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return '₽' + context.raw.toFixed(2);
-                    }
-                }
-            },
-            datalabels: {
-                anchor: 'end',
-                align: 'end',
-                color: '#111827',
-                formatter: (value) => '₽' + value.toFixed(2),
-                font: { weight: '500', size: 12 }
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: { stepSize: 100 }, // можно подстроить под суммы
-            }
-        },
-        layout: {
-            padding: { top: 30 } // вот этот отступ нужен для текста над колонками
-        }
-    },
-    plugins: [ChartDataLabels]
-});
-</script>
+                // BAR - расходы по пользователям с суммой над столбцами
+                const personChart = new Chart(personCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: {{ person_labels|safe }},
+                        datasets: [{
+                            label: 'Потрачено',
+                            data: {{ person_totals|safe }},
+                            backgroundColor: {{ person_colors|safe }},
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return '₽' + context.raw.toFixed(2);
+                                    }
+                                }
+                            },
+                            datalabels: {
+                                anchor: 'end',
+                                align: 'end',
+                                color: '#111827',
+                                formatter: (value) => '₽' + value.toFixed(2),
+                                font: { weight: '500', size: 12 }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { stepSize: 100 }, // можно подстроить под суммы
+                            }
+                        },
+                        layout: {
+                            padding: { top: 30 } // вот этот отступ нужен для текста над колонками
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                });
+            </script>
         </div>
     </section>
 
