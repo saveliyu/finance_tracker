@@ -29,7 +29,7 @@
             </div>
             {% if f.errors %}
             <div class="form-error">
-                {{ f.errors.0 }}
+                {{ f.errors|striptags }}
             </div>
             {% endif %}
             {% endfor %}

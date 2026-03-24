@@ -19,7 +19,7 @@ class Category(models.Model):
         verbose_name_plural = 'Categories'
 
     def __str__(self):
-        return self.name + ' - ' + self.family.name
+        return self.name
 
     def save(self, *args, **kwargs):
         if not self.slug:

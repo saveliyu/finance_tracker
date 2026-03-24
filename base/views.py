@@ -113,6 +113,7 @@ def delete_purchase_view(request, pk):
 @login_required(login_url='users:login')
 def add_category_view(request):
     categories = Category.objects.filter(family=request.user.get_family_object).order_by('parent')
+
     if not categories:
         if request.user.get_family_object:
             messages.error(request, 'Вы пока что не добавили ни одну категорию')
@@ -120,9 +121,9 @@ def add_category_view(request):
             messages.error(request, 'Вы не состоите в семье')
 
 
-    form = CategoryForm()
+    form = CategoryForm(family=request.user.get_family_object)
     if request.method == 'POST':
-        form = CategoryForm(request.POST)
+        form = CategoryForm(request.POST, family=request.user.get_family_object)
         if form.is_valid():
             category = form.save(commit=False)
             category.family = request.user.get_family_object
