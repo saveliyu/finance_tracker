@@ -21,9 +21,8 @@
         </div>
 
         <div class="invite-buttons">
-            <a href="https://t.me/share/url?url={{ invite.code }}" class="btn invite-btn-left">
-                Отправить другу
-            </a>
+            <button class="btn invite-btn-left" onclick="copyInviteLink('https://dashosavo.ru/login_by_invite/{{ invite.code }}')">Отправить другу</button>
+
 
             <a href="{% url 'family:delete_invite' %}" class="btn invite-btn-left">Удалить приглашение</a>
         </div>
@@ -35,6 +34,22 @@
                 const toast = document.createElement("div");
                 toast.className = "toast-modal toast-success";
                 toast.innerHTML = "<span class='toast-icon'>✔</span> Код скопирован";
+
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.opacity = "0";
+                    toast.style.transform = "translate(-50%, -10px)";
+                }, 2500);
+
+                setTimeout(() => toast.remove(), 3200);
+            });
+        }
+        function copyInviteLink(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                const toast = document.createElement("div");
+                toast.className = "toast-modal toast-success";
+                toast.innerHTML = "<span class='toast-icon'>✔</span> Ссылка скопирована";
 
                 document.body.appendChild(toast);
 
