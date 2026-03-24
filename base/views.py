@@ -56,8 +56,6 @@ def table_view(request, year=None, month=None):
                 purchases = purchases.filter(category__parent=category)
             else:
                 purchases = purchases.filter(category=category)
-    for c in categories:
-        print(c.family)
     if request.GET.get('parents'):
         dashboard_data = get_data_for_dashboard(clean_purchases, purchases, categories, users, parents=True)
     else:
