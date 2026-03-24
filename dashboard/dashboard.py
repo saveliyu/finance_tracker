@@ -62,8 +62,9 @@ def get_person_dashboard_data(purchases, users) -> dict:
         'person_colors': person_colors,}
 
 def get_products_per_day(purchases) -> dict:
-    category = get_object_or_404(Category, slug='eda')
+    category = get_object_or_404(Category, slug__contains='eda', family=purchases.first().family)
     products_per_day = purchases.filter(category__parent=category).aggregate(Sum('price'))['price__sum'] or 0
+
     if products_per_day == 0:
         return {'products_per_day': 0}
     else:
