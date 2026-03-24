@@ -13,13 +13,6 @@
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-}
-
 /* NAVBAR */
 
 .navbar {
@@ -1747,6 +1740,7 @@ tbody tr:hover {
     border-top: 1px solid var(--border);
     background: #ffffffcc;
     backdrop-filter: blur(10px);
+
 }
 
 .footer-content {
@@ -1781,4 +1775,8 @@ tbody tr:hover {
 .footer-link:hover {
     opacity: 1;
     text-decoration: underline;
+}
+
+.all-content {
+    min-height: 800px;
 }
