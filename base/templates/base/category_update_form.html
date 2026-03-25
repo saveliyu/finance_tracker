@@ -1,29 +1,13 @@
 {% extends 'forms.html' %}
 
-{% block form_title %} Новая категория {% endblock %}
+{% block form_title %} Изменение категории {% endblock %}
 
 {% block submit_button %} Сохранить {% endblock %}
 
+{% block extra_buttons %}<a href="#" onclick="openModal({{ category.pk }})" class="btn">Удалить</a>{% endblock %}
 
 {% block form_footer %}
-<div class="category-pills">
-    {% for cat in categories %}
-    <div class="category-pill" style="background: {{ cat.color }}99;">
-        <span style="color: {{ cat.color }}; filter: brightness(0.5);">
-            {% if cat.parent %}
-            <a href="{% url 'base:update_category' cat.pk %}">{{ cat.name }}</a>
 
-            <b>
-                {% else %}
-                <b>
-                    <a href="{% url 'base:update_category' cat.pk %}">{{ cat.name }}</a>
-                    {% endif %}
-                    <a href="#" onclick="openModal({{ cat.pk }})">х</a>
-                </b>
-        </span>
-    </div>
-    {% endfor %}
-</div>
 <div class="modal-overlay" id="CategoryModal">
         <div class="modal-window">
 

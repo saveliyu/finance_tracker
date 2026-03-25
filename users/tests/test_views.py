@@ -111,15 +111,6 @@ class LoginTest(BaseViewTest):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-# class CustomUserRegisterView(CreateView):
-#     form_class = CustomUserRegisterForm
-#     template_name = 'users/register.html'
-#     success_url = '/'
-#
-#     def form_valid(self, form):
-#         response = super().form_valid(form)
-#         login(self.request, self.object)
-#         return response
 
 class RegisterTest(BaseViewTest):
     def test_register_view(self):
@@ -137,8 +128,9 @@ class RegisterTest(BaseViewTest):
     def test_register_valid_post(self):
         self.client.logout()
         url = reverse('users:register')
-        response = self.client.post(url, {'name':'test1', 'username':'test1',
-                                          'password1':'zxcasdqwe2006', 'password2':'zxcasdqwe2006', 'color':'#b3b3b3'})
+        response = self.client.post(url, {'name': 'test1', 'username': 'test1',
+                                          'password1': 'zxcasdqwe2006', 'password2': 'zxcasdqwe2006',
+                                          'color': '#b3b3b3'})
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/')
         user = get_user(self.client)

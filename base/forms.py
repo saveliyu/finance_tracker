@@ -64,3 +64,28 @@ class CategoryForm(forms.ModelForm):
                 parent=None,
                 family=family
             )
+
+
+class CategoryChangeForm(forms.ModelForm):
+    name = forms.CharField(label='Название категории')
+    color = forms.CharField(label='Цвет категории',
+                            widget=forms.DateInput(attrs={'type': 'color', 'class': 'color-input'}))
+    parent = forms.ModelChoiceField(queryset=Category.objects.none(),
+                                    empty_label='Эта категория будет родительской',
+                                    label='Выберите родительскую категорию',
+                                    widget=forms.Select(attrs={'class': 'select-input category-input'}), required=False)
+
+    class Meta:
+        model = Category
+        fields = ('name', 'color', 'parent')
+
+    def __init__(self, *args, **kwargs):
+        family = kwargs.pop('family', None)  # достаём family
+        super().__init__(*args, **kwargs)
+
+        if family:
+            self.fields['parent'].queryset = Category.objects.filter(
+                parent=None,
+                family=family
+            )
+

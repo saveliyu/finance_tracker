@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.html import format_html, format_html_join
 from django.views.generic import TemplateView, ListView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
 
-from base.forms import PurchaseForm, CategoryForm
+from base.forms import PurchaseForm, CategoryForm, CategoryChangeForm
 from base.models import Category, Purchase
 
 from datetime import datetime
@@ -136,6 +137,34 @@ def add_category_view(request):
         'form': form,
     }
     return render(request, 'base/category_form.html', context)
+
+@login_required(login_url='users:login')
+def update_category_view(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+    form = CategoryChangeForm(instance=category, family=request.user.get_family_object)
+
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, family=request.user.get_family_object, instance=category)
+        if form.is_valid():
+            updated_category = form.save(commit=False)
+            parent = form.cleaned_data['parent']
+            updated_category.parent = parent
+
+            updated_category.save()
+
+            messages.success(request, f'Категория "{updated_category.name}" обновлена.')
+
+            return redirect('base:add_category')
+        else:
+            messages.error(request, form.errors)
+            return redirect('base:add_category')
+
+
+    context = {
+        'form': form,
+        'category': category,
+    }
+    return render(request, 'base/category_update_form.html', context)
 
 
 def delete_category_view(request, pk):

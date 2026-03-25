@@ -1,8 +1,21 @@
+from django.test import TestCase, Client
+
 from django.urls import reverse
 from django.contrib.messages import get_messages
 
-from .base_view import BaseViewTest
+from users.models import CustomUser
 from family.models import *
+
+
+class BaseViewTest(TestCase):
+    def setUp(self):
+        self.user = CustomUser.objects.create_user(username='test', password='1234', name='test', color='#7542f5')
+
+        self.client = Client()
+        self.client.login(username='test', password='1234')
+
+        self.family = Family.objects.create(name='Test Family')
+        self.member = FamilyMember.objects.create(family=self.family, user=self.user)
 
 
 class InviteViewTest(BaseViewTest):
@@ -74,7 +87,6 @@ class InviteViewTest(BaseViewTest):
         self.assertContains(response, code)
 
     def test_invite_view_without_login(self):
-
         self.client.logout()
         url = reverse('family:invite')
         response = self.client.get(url)
@@ -164,7 +176,6 @@ class InviteViewTest(BaseViewTest):
             family=self.family
         )
 
-
         url = reverse('family:login_by_invite', kwargs={'code': invite.code})
         response = self.client.get(url)
 
@@ -224,3 +235,29 @@ class InviteViewTest(BaseViewTest):
         self.assertFalse(
             FamilyInvite.objects.filter(code=invite.code).exists()
         )
+
+
+class ProfileFamilyViewTest(BaseViewTest):
+
+    def test_delete_member(self):
+        url = reverse('family:delete_member', kwargs={'pk': self.user.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('family:profile_family'))
+        self.assertIsNone(FamilyMember.objects.filter(user__pk=self.user.pk).first())
+
+    def test_delete_empty_member(self):
+        url = reverse('family:delete_member', kwargs={'pk': 3})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('family:profile_family'))
+
+
+class ProfileFamilyViewTest(BaseViewTest):
+
+    def test_members_list_view(self):
+        url = reverse('family:profile_family')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.family.name)
