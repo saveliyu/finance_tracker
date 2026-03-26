@@ -204,11 +204,11 @@
             <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
             <script>
-                const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-                const personCtx = document.getElementById('personChart').getContext('2d');
+const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+const personCtx = document.getElementById('personChart').getContext('2d');
 
-                // PIE / DOUGHNUT - категории с процентами
-                const categoryChart = new Chart(categoryCtx, {
+// PIE / DOUGHNUT - категории с процентами прямо на графике
+const categoryChart = new Chart(categoryCtx, {
     type: 'pie',
     data: {
         labels: {{ category_labels|safe }},
@@ -221,80 +221,81 @@
         responsive: true,
         plugins: {
             legend: { display: false },
-
             tooltip: {
                 callbacks: {
                     label: function(context) {
                         const value = context.raw;
                         const total = context.chart.data.datasets[0].data
                             .reduce((a, b) => a + b, 0);
-
                         const percent = (value / total * 100).toFixed(1);
-
                         return `${context.label}: ₽${value.toFixed(2)} (${percent}%)`;
                     }
                 }
             },
-
             datalabels: {
-                color: '#111827',
+                color: '#111827', // цвет текста
                 formatter: (value, context) => {
-                    const total = context.chart.data.datasets[0].data
-                        .reduce((a, b) => a + b, 0);
+                    const total = context.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);
                     const percent = (value / total * 100).toFixed(1);
-                    return ''; // если хочешь показывать проценты — скажи
+                    if (percent > 6) {
+                    return percent + '%';}
+                    else { return '' }
                 },
-                font: { weight: '500', size: 12 }
+                font: { weight: '500', size: 12},
+                anchor: 'center',
+                align: 'end',
+                offset: 20,
+                clamp: true,
+                textAlign: 'center'
             }
         }
     },
     plugins: [ChartDataLabels]
 });
 
-
-                // BAR - расходы по пользователям с суммой над столбцами
-                const personChart = new Chart(personCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: {{ person_labels|safe }},
-                        datasets: [{
-                            label: 'Потрачено',
-                            data: {{ person_totals|safe }},
-                            backgroundColor: {{ person_colors|safe }},
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return '₽' + context.raw.toFixed(2);
-                                    }
-                                }
-                            },
-                            datalabels: {
-                                anchor: 'end',
-                                align: 'end',
-                                color: '#111827',
-                                formatter: (value) => '₽' + value.toFixed(2),
-                                font: { weight: '500', size: 12 }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: { stepSize: 100 }, // можно подстроить под суммы
-                            }
-                        },
-                        layout: {
-                            padding: { top: 30 } // вот этот отступ нужен для текста над колонками
-                        }
-                    },
-                    plugins: [ChartDataLabels]
-                });
-            </script>
+// BAR - расходы по пользователям с суммой над столбцами
+const personChart = new Chart(personCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ person_labels|safe }},
+        datasets: [{
+            label: 'Потрачено',
+            data: {{ person_totals|safe }},
+            backgroundColor: {{ person_colors|safe }},
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return '₽' + context.raw.toFixed(2);
+                    }
+                }
+            },
+            datalabels: {
+                anchor: 'end',
+                align: 'end',
+                color: '#111827',
+                formatter: (value) => '₽' + value.toFixed(2),
+                font: { weight: '500', size: 12 }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { stepSize: 100 }
+            }
+        },
+        layout: {
+            padding: { top: 30 }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
+</script>
         </div>
     </section>
 

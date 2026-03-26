@@ -6,14 +6,22 @@ from base.models import Category, Purchase
 
 def get_parrent_category_dashboard_data(purchases, categories) -> dict:
     category_data = purchases.filter(category__parent__isnull=False).values('category__parent__id', 'category__parent__name').annotate(total=Sum('price'))
+
+    categories_dict = {c.id: c for c in categories}
+
     category_labels = []
     category_totals = []
     category_colors = []
 
     for c in category_data:
+        cat_id = c['category__parent__id']
+
+        category_obj = categories_dict.get(cat_id)
+        if not category_obj:
+            continue
+
         category_labels.append(c['category__parent__name'])
         category_totals.append(float(c['total']))
-        category_obj = categories.get(id=c['category__parent__id'])
         category_colors.append(category_obj.color)
     return {'category_labels': category_labels,
         'category_totals': category_totals,
