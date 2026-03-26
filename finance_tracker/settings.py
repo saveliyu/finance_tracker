@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'dashosavo.ru', 'www.dashosavo.ru']
 
@@ -152,4 +152,7 @@ LOGOUT_REDIRECT_URL = '/'
 # CSRF_COOKIE_SECURE = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+CSRF_TRUSTED_ORIGINS = ['https://dashosavo.ru', 'https://www.dashosavo.ru']
+
 LOGIN_REDIRECT_URL = '/'
