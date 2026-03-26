@@ -57,10 +57,13 @@ def table_view(request, year=None, month=None):
                 purchases = purchases.filter(category__parent=category)
             else:
                 purchases = purchases.filter(category=category)
-    if request.GET.get('parents'):
-        dashboard_data = get_data_for_dashboard(clean_purchases, purchases, categories, users, parents=True)
+
+
+    if purchases.exists() and request.user.get_family_object:
+        parents = bool(request.GET.get('parents'))
+        dashboard_data = get_data_for_dashboard(clean_purchases, purchases, categories, users, parents=parents)
     else:
-        dashboard_data = get_data_for_dashboard(clean_purchases, purchases, categories, users)
+        dashboard_data = dict()
 
     if month not in MONTHS:
         return redirect('base:home')
@@ -94,7 +97,6 @@ def table_view(request, year=None, month=None):
 @login_required(login_url='users:login')
 def add_purchase_view(request):
     form = PurchaseForm(request.POST, initial={'user': request.user, }, user=request.user, family=request.user.get_family_object)
-    print(form.errors)
     if form.is_valid():
         if form.cleaned_data['user'] != request.user:
             return redirect(request.META.get('HTTP_REFERER', '/'))
@@ -147,14 +149,16 @@ def update_category_view(request, pk):
 
     if request.method == 'POST':
         form = CategoryForm(request.POST, family=request.user.get_family_object, instance=category)
+        old_category = {'name': category.name, 'parent': category.parent, 'color': category.color}
         if form.is_valid():
             updated_category = form.save(commit=False)
             parent = form.cleaned_data['parent']
             updated_category.parent = parent
 
             updated_category.save()
-
-            messages.success(request, f'Категория "{updated_category.name}" обновлена.')
+            new_category = {'name': updated_category.name, 'parent': updated_category.parent, 'color': updated_category.color}
+            if old_category != new_category:
+                messages.success(request, f'Категория "{updated_category.name}" обновлена.')
 
             return redirect('base:add_category')
         else:

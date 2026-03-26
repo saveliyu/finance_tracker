@@ -135,9 +135,20 @@
                             </tbody>
                         </table>
                     </div>
-                    {% if not purchases %}
-                    <div class="empty-state">Пока нет трат за этот месяц.</div>
+
+                    {% if not user.get_family_object %}
+                        <div class="empty-state">
+                            Вы не состоите в семье. Создайте семью или вступите по коду, во вкладке "Создать семью"
+                        </div>
+                    {% elif not categories %}
+                        <div class="empty-state">
+                            У вас нет созданных категорий.
+                            Вы можете создать новые категории во вкладке "Добавить категорию"
+                        </div>
+                    {% elif not purchases %}
+                        <div class="empty-state">Пока нет трат за этот месяц.</div>
                     {% endif %}
+
                 </div>
                 <!-- Пагинация -->
                 <div class="pagination">
@@ -178,8 +189,8 @@
                             <input type="hidden" name="page" value="{{ request.GET.page }}">
 
                             <label class="toggle">
-                                <input type="checkbox" onchange="this.form.submit()" name="parents"
-                                       {% if request.GET.parents == 'on' %} checked {% endif %}>
+                                <input type="checkbox" onchange="this.form.submit()" name="parents" value="1"
+                                       {% if request.GET.parents == '1' %} checked {% endif %}>
                                 <span class="slider"></span>
                             </label>
                         </form>
