@@ -10,7 +10,7 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     color = models.CharField(max_length=100)
-    family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name='categories')
+    family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name='categories', null=True, blank=True)
 
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
 
@@ -19,7 +19,7 @@ class Category(models.Model):
         verbose_name_plural = 'Categories'
 
     def __str__(self):
-        return self.name + ' - ' + self.family.name
+        return self.name
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -40,7 +40,7 @@ class Purchase(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     price = models.DecimalField(decimal_places=2, max_digits=10)
     date = models.DateField()
-    family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name='purchases')
+    family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name='purchases', null=True, blank=True)
 
     class Meta:
         ordering = ['-date']
