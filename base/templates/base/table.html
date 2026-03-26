@@ -100,7 +100,7 @@
                                     </td>
                                     {% endfor %}
                                     <td>
-                                        <button class="btn">+</button>
+                                        <button type="submit" class="btn">+</button>
                                     </td>
 
                                 </form>
@@ -120,7 +120,11 @@
                                 <td class="category-cloud" style="--cat-color: {{ pur.user.color }};">
                                     {{ pur.user.name }}
                                 </td>
+                                {% if pur.name %}
                                 <td>{{ pur.name }}</td>
+                                {% else %}
+                                <td>-</td>
+                                {% endif %}
                                 <td class="amount-cell">{{ pur.price }} ₽</td>
                                 <td class="date-cell">{{ pur.date|date:"d.m.Y" }}</td>
                                 <td>
@@ -205,38 +209,48 @@
 
                 // PIE / DOUGHNUT - категории с процентами
                 const categoryChart = new Chart(categoryCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: {{ category_labels|safe }},
-                        datasets: [{
-                            data: {{ category_totals|safe }},
-                            backgroundColor: {{ category_colors|safe }}
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: { position: 'bottom' },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return context.label + ': ₽' + context.raw.toFixed(2);
-                                    }
-                                }
-                            },
-                            datalabels: {
-                                color: '#111827', // цвет текста
-                                formatter: (value, context) => {
-                                    const total = context.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);
-                                    const percent = (value / total * 100).toFixed(1);
-                                    return percent + '%';
-                                },
-                                font: { weight: '500', size: 12 }
-                            }
-                        }
-                    },
-                    plugins: [ChartDataLabels]
-                });
+    type: 'pie',
+    data: {
+        labels: {{ category_labels|safe }},
+        datasets: [{
+            data: {{ category_totals|safe }},
+            backgroundColor: {{ category_colors|safe }}
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const value = context.raw;
+                        const total = context.chart.data.datasets[0].data
+                            .reduce((a, b) => a + b, 0);
+
+                        const percent = (value / total * 100).toFixed(1);
+
+                        return `${context.label}: ₽${value.toFixed(2)} (${percent}%)`;
+                    }
+                }
+            },
+
+            datalabels: {
+                color: '#111827',
+                formatter: (value, context) => {
+                    const total = context.chart.data.datasets[0].data
+                        .reduce((a, b) => a + b, 0);
+                    const percent = (value / total * 100).toFixed(1);
+                    return ''; // если хочешь показывать проценты — скажи
+                },
+                font: { weight: '500', size: 12 }
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
+});
+
 
                 // BAR - расходы по пользователям с суммой над столбцами
                 const personChart = new Chart(personCtx, {

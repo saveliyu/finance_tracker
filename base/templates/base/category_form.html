@@ -11,12 +11,12 @@
     <div class="category-pill" style="background: {{ cat.color }}99;">
         <span style="color: {{ cat.color }}; filter: brightness(0.5);">
             {% if cat.parent %}
-            <a href="{% url 'base:update_category' cat.pk %}">{{ cat.name }}</a>
+            <a href="{% url 'base:update_category' cat.pk %}" class="category-a">{{ cat.name }}</a>
 
             <b>
                 {% else %}
                 <b>
-                    <a href="{% url 'base:update_category' cat.pk %}">{{ cat.name }}</a>
+                    <a href="{% url 'base:update_category' cat.pk %}" class="category-a">{{ cat.name }}</a>
                     {% endif %}
                     <a href="#" onclick="openModal({{ cat.pk }})">х</a>
                 </b>

@@ -6,24 +6,24 @@ import datetime
 
 
 class PurchaseForm(forms.ModelForm):
-    category = forms.ModelChoiceField(Category.objects.exclude(parent=None), empty_label='Категория',
+    category = forms.ModelChoiceField(Category.objects.none(), empty_label='Категория',
                                       widget=forms.Select(
-                                          attrs={'class': 'form-control', 'style': 'min-width: 100px;',
+                                          attrs={'style': 'min-width: 100px;',
                                                  'class': 'form-control select-input'}))
     user = forms.ModelChoiceField(
         queryset=get_user_model().objects.all(), empty_label=None,
         widget=forms.Select(attrs={'style': 'min-width: 70px;', 'class': 'form-control select-input'})
     )
-    name = forms.CharField(max_length=100,
+    name = forms.CharField(max_length=100, required=False,
                            widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Название'}))
     price = forms.DecimalField(decimal_places=2, max_digits=10, widget=forms.NumberInput(
         attrs={'type': "number", 'placeholder': "0", 'class': 'form-control'}))
     date = forms.DateField(
-        initial=datetime.date.today,
         widget=forms.DateInput(
             attrs={
                 'type': 'date',
-                'class': 'form-control'  # можно добавить класс для стилей
+                'class': 'form-control',
+                'value': datetime.date.today().strftime('%Y-%m-%d'),
             }
         )
     )
@@ -34,12 +34,17 @@ class PurchaseForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         current_user = kwargs.pop('user', None)
+        family = kwargs.pop('family', None)
+        print(family)
         super().__init__(*args, **kwargs)
 
         # делаем queryset только для текущего пользователя
         if current_user:
             self.fields['user'].queryset = get_user_model().objects.filter(pk=current_user.pk)
             self.fields['user'].initial = current_user
+        if family:
+            self.fields['category'].queryset = Category.objects.filter(family=family, parent__isnull=False)
+
 
 
 class CategoryForm(forms.ModelForm):

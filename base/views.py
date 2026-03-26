@@ -68,7 +68,8 @@ def table_view(request, year=None, month=None):
     trans_month = MONTHS[month]
     arrows_url = get_arrows_url(year, month)
 
-    form = PurchaseForm(initial={'user': request.user}, user=request.user)
+
+    form = PurchaseForm(initial={'user': request.user, }, user=request.user, family=request.user.get_family_object)
     paginator = Paginator(purchases, 30)
     page = request.GET.get('page')
     paginated_purchases = paginator.get_page(page)
@@ -92,7 +93,8 @@ def table_view(request, year=None, month=None):
 
 @login_required(login_url='users:login')
 def add_purchase_view(request):
-    form = PurchaseForm(request.POST)
+    form = PurchaseForm(request.POST, initial={'user': request.user, }, user=request.user, family=request.user.get_family_object)
+    print(form.errors)
     if form.is_valid():
         if form.cleaned_data['user'] != request.user:
             return redirect(request.META.get('HTTP_REFERER', '/'))
